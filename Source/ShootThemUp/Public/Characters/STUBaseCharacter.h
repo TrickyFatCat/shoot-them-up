@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "STUBaseCharacter.generated.h"
 
+class UCameraComponent;
+
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 {
@@ -25,5 +27,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+// Camera
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UCameraComponent* CameraComponent = nullptr;
 
 };
