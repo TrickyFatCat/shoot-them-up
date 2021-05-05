@@ -39,7 +39,7 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Movement bindings
-	PlayerInputComponent->BindAxis("MoveFroward", this, &ASTUBaseCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ASTUBaseCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASTUBaseCharacter::MoveRight);
 
 	// Camera bindings
