@@ -7,6 +7,7 @@
 #include "STUBaseCharacter.generated.h"
 
 class UCameraComponent;
+class USpringArmComponent;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -32,10 +33,9 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	UCameraComponent* CameraComponent = nullptr;
-private:
-	void LookUp(const float AxisValue);
-	void TurnAround(const float AxisValue);
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadoNLY, Category="Components", meta=(AllowPrivateAccess="true"))
+	USpringArmComponent* SpringArmComponent = nullptr;
+	
 // Movement
 private:
 	void MoveForward(const float AxisValue);
