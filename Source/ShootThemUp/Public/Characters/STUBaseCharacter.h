@@ -33,4 +33,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	UCameraComponent* CameraComponent = nullptr;
 
+// Movement
+private:
+	void MoveForward(const float AxisValue);
+	void MoveRight(const float AxisValue);
+
 };

@@ -3,6 +3,7 @@
 
 #include "Characters/STUBaseCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Components/InputComponent.h"
 
 // Sets default values
 ASTUBaseCharacter::ASTUBaseCharacter()
@@ -12,14 +13,12 @@ ASTUBaseCharacter::ASTUBaseCharacter()
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(GetRootComponent());
-
 }
 
 // Called when the game starts or when spawned
 void ASTUBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -34,5 +33,18 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// Movement bindings
+	PlayerInputComponent->BindAxis("MoveFroward", this, &ASTUBaseCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ASTUBaseCharacter::MoveRight);
+}
+
+void ASTUBaseCharacter::MoveForward(const float AxisValue)
+{
+	AddMovementInput(GetActorForwardVector(), AxisValue);
+}
+
+void ASTUBaseCharacter::MoveRight(const float AxisValue)
+{
+	AddMovementInput(GetActorRightVector(), AxisValue);
 }
 
