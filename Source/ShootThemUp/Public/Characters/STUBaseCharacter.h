@@ -50,11 +50,11 @@ private:
         BlueprintGetter=GetSprintSpeed,
         BlueprintSetter=SetSprintSpeed,
         Category="Movement",
-        meta=(AllowPrivateAccess="true"))
+        meta=(AllowPrivateAccess="true", ClampMin="0.0"))
     float SprintSpeed = 1000.f;
     float DefaultWalkSpeed = 600.f;
     
-    UPROPERTY(BlueprintReadOnly, BlueprintGetter=GetIsSprinting)
+    UPROPERTY(BlueprintReadOnly, BlueprintGetter=GetIsSprinting, meta=(AllowPrivateAccess="true"))
     bool bIsSprinting = false;
 
     void MoveForward(const float AxisValue);
