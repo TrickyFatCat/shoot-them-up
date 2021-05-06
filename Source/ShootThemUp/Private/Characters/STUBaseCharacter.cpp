@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ASTUBaseCharacter::ASTUBaseCharacter()
@@ -24,6 +25,7 @@ ASTUBaseCharacter::ASTUBaseCharacter()
 void ASTUBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	DefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
 // Called every frame
@@ -48,6 +50,10 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	// Jump bindings
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::Jump);
+
+	// Sprint bindings
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASTUBaseCharacter::StartSprinting);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::StopSprinting);
 }
 
 void ASTUBaseCharacter::MoveForward(const float AxisValue)
@@ -58,5 +64,22 @@ void ASTUBaseCharacter::MoveForward(const float AxisValue)
 void ASTUBaseCharacter::MoveRight(const float AxisValue)
 {
 	AddMovementInput(GetActorRightVector(), AxisValue);
+}
+
+// ReSharper disable once CppMemberFunctionMayBeConst
+void ASTUBaseCharacter::StartSprinting()
+{
+	SetMaxWalkSpeed(SprintSpeed);
+}
+
+// ReSharper disable once CppMemberFunctionMayBeConst
+void ASTUBaseCharacter::StopSprinting()
+{
+	SetMaxWalkSpeed(DefaultWalkSpeed);
+}
+
+void ASTUBaseCharacter::SetMaxWalkSpeed(const float NewSpeed) const
+{
+	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
 }
 
