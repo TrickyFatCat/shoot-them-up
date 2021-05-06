@@ -69,12 +69,14 @@ void ASTUBaseCharacter::MoveRight(const float AxisValue)
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::StartSprinting()
 {
+	bIsSprinting = true;
 	SetMaxWalkSpeed(SprintSpeed);
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::StopSprinting()
 {
+	bIsSprinting = false;
 	SetMaxWalkSpeed(DefaultWalkSpeed);
 }
 

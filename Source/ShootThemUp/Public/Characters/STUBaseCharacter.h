@@ -42,6 +42,8 @@ public:
     float GetSprintSpeed() const { return SprintSpeed; }
     UFUNCTION(BlueprintSetter)
     void SetSprintSpeed(const float NewSpeed) { SprintSpeed = NewSpeed; }
+    UFUNCTION(BlueprintGetter)
+    bool GetIsSprinting() const { return bIsSprinting; }
 private:
     UPROPERTY(EditDefaultsOnly,
         BlueprintReadWrite,
@@ -51,6 +53,10 @@ private:
         meta=(AllowPrivateAccess="true"))
     float SprintSpeed = 1000.f;
     float DefaultWalkSpeed = 600.f;
+    
+    UPROPERTY(BlueprintReadOnly, BlueprintGetter=GetIsSprinting)
+    bool bIsSprinting = false;
+
     void MoveForward(const float AxisValue);
     void MoveRight(const float AxisValue);
     void StartSprinting();
