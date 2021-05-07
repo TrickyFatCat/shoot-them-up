@@ -38,10 +38,12 @@ protected:
 
     // Movement
 public:
-    UFUNCTION(BlueprintPure)
+    UFUNCTION(BlueprintPure, Category="Movement")
     bool GetIsSprinting() const;
-    UFUNCTION(BlueprintPure)
+    UFUNCTION(BlueprintPure, Category="Movement")
     float GetCurrentVelocity() const { return GetVelocity().Size(); }
+    UFUNCTION(BlueprintPure, Category="Movement")
+    float GetMovementDirection() const;
 private:
     bool bIsMovingForward = false;
     bool bSprintPressed = false;

@@ -61,14 +61,31 @@ bool ASTUBaseCharacter::GetIsSprinting() const
     return bSprintPressed && bIsMovingForward && !GetVelocity().IsZero();
 }
 
+float ASTUBaseCharacter::GetMovementDirection() const
+{
+    if (GetVelocity().IsZero()) return 0.f;
+    
+    const FVector NormalizedVelocity = GetVelocity().GetSafeNormal();
+    const FVector ForwardVector = GetActorForwardVector();
+    const float AngleBetween = FMath::Acos(FVector::DotProduct(ForwardVector, NormalizedVelocity));
+    const FVector CrossProduct = FVector::CrossProduct(ForwardVector, NormalizedVelocity);
+    const float Degrees = FMath::RadiansToDegrees(AngleBetween);
+    return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
+}
+
 void ASTUBaseCharacter::MoveForward(const float AxisValue)
 {
     bIsMovingForward = AxisValue > 0.f;
+
+    if (AxisValue > 0.f) return;
+    
     AddMovementInput(GetActorForwardVector(), AxisValue);
 }
 
 void ASTUBaseCharacter::MoveRight(const float AxisValue)
 {
+    if (AxisValue > 0.f) return;
+    
     AddMovementInput(GetActorRightVector(), AxisValue);
 }
 
