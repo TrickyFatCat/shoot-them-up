@@ -4,6 +4,7 @@
 #include "Characters/STUBaseCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/Controllers/STUPlayerController.h"
 #include "Components/InputComponent.h"
 #include "Components/STUCharacterMovementComponent.h"
 
@@ -27,6 +28,7 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
 void ASTUBaseCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    DefaultInputYawScale = Cast<ASTUPlayerController>(GetController())->InputYawScale;
 }
 
 // Called every frame
@@ -56,6 +58,16 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::StopSprinting);
 }
 
+void ASTUBaseCharacter::SetInputYawScale(const float NewYawScale) const
+{
+    ASTUPlayerController* PlayerController = Cast<ASTUPlayerController>(GetController());
+
+    if (PlayerController)
+    {
+        PlayerController->InputYawScale = NewYawScale;
+    }
+}
+
 bool ASTUBaseCharacter::GetIsSprinting() const
 {
     return bSprintPressed && bIsMovingForward && !GetVelocity().IsZero();
@@ -80,6 +92,8 @@ void ASTUBaseCharacter::MoveForward(const float AxisValue)
     if (AxisValue == 0.f) return;
     
     AddMovementInput(GetActorForwardVector(), AxisValue);
+
+    SetInputYawScale(GetIsSprinting() ? SprintInputYawScale : DefaultInputYawScale);
 }
 
 void ASTUBaseCharacter::MoveRight(const float AxisValue)

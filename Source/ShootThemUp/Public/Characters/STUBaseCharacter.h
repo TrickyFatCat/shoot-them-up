@@ -30,11 +30,17 @@ public:
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     // Camera
+public:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Camera");
+    float SprintInputYawScale = 0.5f;
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
     UCameraComponent* CameraComponent = nullptr;
     UPROPERTY(VisibleAnywhere, BlueprintReadoNLY, Category="Components", meta=(AllowPrivateAccess="true"))
     USpringArmComponent* SpringArmComponent = nullptr;
+private:
+    float DefaultInputYawScale = 2.5f;
+    void SetInputYawScale(const float NewYawScale) const;
 
     // Movement
 public:
