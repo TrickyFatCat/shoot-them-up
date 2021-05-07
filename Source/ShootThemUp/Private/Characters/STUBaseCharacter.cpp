@@ -77,14 +77,14 @@ void ASTUBaseCharacter::MoveForward(const float AxisValue)
 {
     bIsMovingForward = AxisValue > 0.f;
 
-    if (AxisValue > 0.f) return;
+    if (AxisValue == 0.f) return;
     
     AddMovementInput(GetActorForwardVector(), AxisValue);
 }
 
 void ASTUBaseCharacter::MoveRight(const float AxisValue)
 {
-    if (AxisValue > 0.f) return;
+    if (AxisValue == 0.f || GetIsSprinting()) return;
     
     AddMovementInput(GetActorRightVector(), AxisValue);
 }
