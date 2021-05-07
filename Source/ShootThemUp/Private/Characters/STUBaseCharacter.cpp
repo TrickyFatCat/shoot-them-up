@@ -56,8 +56,14 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::StopSprinting);
 }
 
+bool ASTUBaseCharacter::GetIsSprinting() const
+{
+	return bSprintPressed && bIsMovingForward && !GetVelocity().IsZero();
+}
+
 void ASTUBaseCharacter::MoveForward(const float AxisValue)
 {
+	bIsMovingForward = AxisValue > 0.f;
 	AddMovementInput(GetActorForwardVector(), AxisValue);
 }
 
@@ -69,18 +75,14 @@ void ASTUBaseCharacter::MoveRight(const float AxisValue)
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::StartSprinting()
 {
-	if (GetVelocity().Size() <= 0.f) return;
-	
-	bIsSprinting = true;
+	bSprintPressed = true;
 	SetMaxWalkSpeed(SprintSpeed);
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::StopSprinting()
 {
-	if (!bIsSprinting) return;
-	
-	bIsSprinting = false;
+	bSprintPressed = false;
 	SetMaxWalkSpeed(DefaultWalkSpeed);
 }
 
