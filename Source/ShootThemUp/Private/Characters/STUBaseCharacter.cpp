@@ -5,89 +5,81 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/STUCharacterMovementComponent.h"
 
 // Sets default values
-ASTUBaseCharacter::ASTUBaseCharacter()
+ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
+    : Super(
+        ObjInit.SetDefaultSubobjectClass<USTUCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
 
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
-	SpringArmComponent->SetupAttachment(GetRootComponent());
-	SpringArmComponent->bUsePawnControlRotation = true;
-	
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
-	CameraComponent->SetupAttachment(SpringArmComponent);
+    SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+    SpringArmComponent->SetupAttachment(GetRootComponent());
+    SpringArmComponent->bUsePawnControlRotation = true;
+
+    CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
+    CameraComponent->SetupAttachment(SpringArmComponent);
 }
 
 // Called when the game starts or when spawned
 void ASTUBaseCharacter::BeginPlay()
 {
-	Super::BeginPlay();
-	DefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+    Super::BeginPlay();
 }
 
 // Called every frame
 void ASTUBaseCharacter::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+    Super::Tick(DeltaTime);
 }
 
 // Called to bind functionality to input
 void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// Movement bindings
-	PlayerInputComponent->BindAxis("MoveForward", this, &ASTUBaseCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ASTUBaseCharacter::MoveRight);
+    // Movement bindings
+    PlayerInputComponent->BindAxis("MoveForward", this, &ASTUBaseCharacter::MoveForward);
+    PlayerInputComponent->BindAxis("MoveRight", this, &ASTUBaseCharacter::MoveRight);
 
-	// Camera bindings
-	PlayerInputComponent->BindAxis("LookUp", this, &ASTUBaseCharacter::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("TurnAround", this, &ASTUBaseCharacter::AddControllerYawInput);
+    // Camera bindings
+    PlayerInputComponent->BindAxis("LookUp", this, &ASTUBaseCharacter::AddControllerPitchInput);
+    PlayerInputComponent->BindAxis("TurnAround", this, &ASTUBaseCharacter::AddControllerYawInput);
 
-	// Jump bindings
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::Jump);
+    // Jump bindings
+    PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::Jump);
 
-	// Sprint bindings
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASTUBaseCharacter::StartSprinting);
-	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::StopSprinting);
+    // Sprint bindings
+    PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASTUBaseCharacter::StartSprinting);
+    PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::StopSprinting);
 }
 
 bool ASTUBaseCharacter::GetIsSprinting() const
 {
-	return bSprintPressed && bIsMovingForward && !GetVelocity().IsZero();
+    return bSprintPressed && bIsMovingForward && !GetVelocity().IsZero();
 }
 
 void ASTUBaseCharacter::MoveForward(const float AxisValue)
 {
-	bIsMovingForward = AxisValue > 0.f;
-	AddMovementInput(GetActorForwardVector(), AxisValue);
+    bIsMovingForward = AxisValue > 0.f;
+    AddMovementInput(GetActorForwardVector(), AxisValue);
 }
 
 void ASTUBaseCharacter::MoveRight(const float AxisValue)
 {
-	AddMovementInput(GetActorRightVector(), AxisValue);
+    AddMovementInput(GetActorRightVector(), AxisValue);
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::StartSprinting()
 {
-	bSprintPressed = true;
-	SetMaxWalkSpeed(SprintSpeed);
+    bSprintPressed = true;
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::StopSprinting()
 {
-	bSprintPressed = false;
-	SetMaxWalkSpeed(DefaultWalkSpeed);
+    bSprintPressed = false;
 }
-
-void ASTUBaseCharacter::SetMaxWalkSpeed(const float NewSpeed) const
-{
-	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
-}
-

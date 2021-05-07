@@ -16,7 +16,7 @@ class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 
 public:
     // Sets default values for this character's properties
-    ASTUBaseCharacter();
+    ASTUBaseCharacter(const FObjectInitializer& ObjInit);
 
 protected:
     // Called when the game starts or when spawned
@@ -38,21 +38,11 @@ protected:
 
     // Movement
 public:
-    UFUNCTION(BlueprintGetter)
-    float GetSprintSpeed() const { return SprintSpeed; }
-    UFUNCTION(BlueprintSetter)
-    void SetSprintSpeed(const float NewSpeed) { SprintSpeed = NewSpeed; }
     UFUNCTION(BlueprintPure)
     bool GetIsSprinting() const;
+    UFUNCTION(BlueprintPure)
+    float GetCurrentVelocity() const { return GetVelocity().Size(); }
 private:
-    UPROPERTY(EditDefaultsOnly,
-        BlueprintReadWrite,
-        BlueprintGetter=GetSprintSpeed,
-        BlueprintSetter=SetSprintSpeed,
-        Category="Movement",
-        meta=(AllowPrivateAccess="true", ClampMin="0.0"))
-    float SprintSpeed = 1000.f;
-    float DefaultWalkSpeed = 600.f;
     bool bIsMovingForward = false;
     bool bSprintPressed = false;
 
@@ -60,5 +50,4 @@ private:
     void MoveRight(const float AxisValue);
     void StartSprinting();
     void StopSprinting();
-    void SetMaxWalkSpeed(const float NewSpeed) const;
 };
