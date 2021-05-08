@@ -8,6 +8,8 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UTextRenderComponent;
+class USTUHealthComponent;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -58,4 +60,13 @@ private:
     void MoveRight(const float AxisValue);
     void StartSprinting();
     void StopSprinting();
+
+    // Health
+public:
+private:
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
+    USTUHealthComponent* HealthComponent = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadoNLY, Category="Components", meta=(AllowPrivateAccess="true"))
+    UTextRenderComponent* HealthTextComponent = nullptr;
+    
 };
