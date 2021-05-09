@@ -27,6 +27,8 @@ public:
     float Damage = 1.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bDoFullDamage = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<UDamageType> DamageType;
 
 private:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))

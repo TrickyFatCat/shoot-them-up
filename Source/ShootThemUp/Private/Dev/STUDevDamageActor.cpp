@@ -27,7 +27,7 @@ void ASTUDevDamageActor::Tick(float DeltaTime)
                                         Damage,
                                         ActorLocation,
                                         Radius,
-                                        nullptr,
+                                        DamageType,
                                         {},
                                         this,
                                         nullptr,
