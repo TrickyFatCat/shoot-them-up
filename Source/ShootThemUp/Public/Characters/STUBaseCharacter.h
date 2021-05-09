@@ -33,7 +33,8 @@ public:
 
     // Camera
 public:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Camera");
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Camera")
+    ;
     float SprintInputYawScale = 0.5f;
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
@@ -50,6 +51,7 @@ public:
     bool GetIsSprinting() const;
     UFUNCTION(BlueprintPure, Category="Movement")
     float GetCurrentVelocity() const { return GetVelocity().Size(); }
+
     UFUNCTION(BlueprintPure, Category="Movement")
     float GetMovementDirection() const;
 private:
@@ -61,12 +63,12 @@ private:
     void StartSprinting();
     void StopSprinting();
 
-    // Health
+    // Health and damage
 public:
 private:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
     USTUHealthComponent* HealthComponent = nullptr;
-    UPROPERTY(VisibleAnywhere, BlueprintReadoNLY, Category="Components", meta=(AllowPrivateAccess="true"))
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
     UTextRenderComponent* HealthTextComponent = nullptr;
-    
+
 };

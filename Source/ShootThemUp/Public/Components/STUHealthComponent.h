@@ -16,12 +16,14 @@ public:
     USTUHealthComponent();
     UFUNCTION(BlueprintGetter)
     float GetHealth() const { return Health; }
+
     UFUNCTION(BlueprintGetter)
     float GetMaxHealth() const { return MaxHealth; }
+
     UFUNCTION(BlueprintGetter)
     float GetInitialHealth() const { return InitialHealth; }
 
-protected:
+private:
     virtual void BeginPlay() override;
     UPROPERTY(BlueprintGetter=GetHealth, meta=(AllowPrivateAccess="true"))
     float Health = 0.f;
@@ -31,6 +33,14 @@ protected:
     float MaxHealth = 100.f;
     UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
     bool bCustomInitialValue = false;
-    UPROPERTY(EditAnywhere, BlueprintGetter=GetInitialHealth, meta=(AllowPrivateAccess="true", ClampMin="1.0", EditCondition="bCustomInitialValue"))
-    float InitialHealth= 100.f;
+    UPROPERTY(EditAnywhere,
+        BlueprintGetter=GetInitialHealth,
+        meta=(AllowPrivateAccess="true", ClampMin="1.0", EditCondition="bCustomInitialValue"))
+    float InitialHealth = 100.f;
+    UFUNCTION()
+    void OnTakeAnyDamage(AActor* DamageActor,
+                               float Damage,
+                               const UDamageType* DamageType,
+                               AController* InstigatedBy,
+                               AActor* DamageCauser);
 };
