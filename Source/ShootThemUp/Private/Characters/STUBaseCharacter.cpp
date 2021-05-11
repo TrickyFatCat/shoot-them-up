@@ -3,6 +3,7 @@
 
 #include "Characters/STUBaseCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "Characters/Controllers/STUPlayerController.h"
 #include "Components/InputComponent.h"
@@ -132,6 +133,11 @@ void ASTUBaseCharacter::OnDeath()
 
     GetCharacterMovement()->DisableMovement();
     SetLifeSpan(DestroyTime);
+
+    if (Controller)
+    {
+        Controller->ChangeState(NAME_Spectating);
+    }
 }
 
 void ASTUBaseCharacter::OnHealthChanged(const float Health, const float DeltaHealth)
