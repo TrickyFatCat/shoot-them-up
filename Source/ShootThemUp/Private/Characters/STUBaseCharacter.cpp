@@ -37,15 +37,16 @@ void ASTUBaseCharacter::BeginPlay()
     check(HealthTextComponent);
     check(GetCharacterMovement());
 
+    OnHealthChanged(HealthComponent->GetHealth(), 0.f);
+    OnShieldChanged(HealthComponent->GetShield(), 0.f);
     HealthComponent->OnDeath.AddUObject(this, &ASTUBaseCharacter::OnDeath);
+    HealthComponent->OnHealthChanged.AddUObject(this, &ASTUBaseCharacter::OnHealthChanged);
+    HealthComponent->OnShieldChanged.AddUObject(this, &ASTUBaseCharacter::OnShieldChanged);
 }
 
 void ASTUBaseCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
-    const float CurrentHealth = HealthComponent->GetHealth();
-    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), CurrentHealth)));
 }
 
 void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -133,4 +134,12 @@ void ASTUBaseCharacter::OnDeath()
     SetLifeSpan(DestroyTime);
 }
 
+void ASTUBaseCharacter::OnHealthChanged(const float Health, const float DeltaHealth)
+{
+    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
+}
 
+void ASTUBaseCharacter::OnShieldChanged(const float Shield, const float DeltaShield)
+{
+    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Shield)));
+}
