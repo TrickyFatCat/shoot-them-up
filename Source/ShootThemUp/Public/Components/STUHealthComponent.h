@@ -14,6 +14,12 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
 
 public:
     USTUHealthComponent();
+
+private:
+    virtual void BeginPlay() override;
+
+    // Health
+public:
     UFUNCTION(BlueprintGetter)
     float GetHealth() const { return Health; }
 
@@ -24,23 +30,45 @@ public:
     float GetInitialHealth() const { return InitialHealth; }
 
 private:
-    virtual void BeginPlay() override;
-    UPROPERTY(BlueprintGetter=GetHealth, meta=(AllowPrivateAccess="true"))
+    UPROPERTY(BlueprintGetter=GetHealth, Category="Health", meta=(AllowPrivateAccess="true"))
     float Health = 0.f;
-    UPROPERTY(EditDefaultsOnly,
-        BlueprintGetter=GetMaxHealth,
-        meta=(AllowPrivateAccess="true"))
+    UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetMaxHealth, Category="Health", meta=(AllowPrivateAccess="true"))
     float MaxHealth = 100.f;
     UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
-    bool bCustomInitialValue = false;
+    bool bCustomInitialHealth = false;
     UPROPERTY(EditAnywhere,
         BlueprintGetter=GetInitialHealth,
-        meta=(AllowPrivateAccess="true", ClampMin="1.0", EditCondition="bCustomInitialValue"))
+        Category="Health",
+        meta=(AllowPrivateAccess="true", ClampMin="1.0", EditCondition="bCustomInitialHealth"))
     float InitialHealth = 100.f;
+
+    // Shield 
+public:
+    UFUNCTION(BlueprintGetter)
+    float GetShield() const { return Shield; }
+
+    UFUNCTION(BlueprintGetter)
+    float GetMaxShield() const { return MaxShield; }
+
+    UFUNCTION(BlueprintGetter)
+    float GetInitialShield() const { return InitialShield; }
+
+private:
+    UPROPERTY(BlueprintGetter=GetShield, Category="Shield", meta=(AllowPrivateAccess="true"))
+    float Shield = 0.f;
+    UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetMaxShield, Category="Shield", meta=(AllowPrivateAccess="true"))
+    float MaxShield = 100.f;
+    UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
+    bool bCustomInitialShield = false;
+    UPROPERTY(EditAnywhere, BlueprintGetter=GetInitialShield, Category="Shield", meta=(AllowPrivateAccess="true", ClampMin="0.0", EditCondition="bCustomInitialShield"))
+    float InitialShield = 100.f;
+
+    // Damage
+private:
     UFUNCTION()
     void OnTakeAnyDamage(AActor* DamageActor,
-                               float Damage,
-                               const UDamageType* DamageType,
-                               AController* InstigatedBy,
-                               AActor* DamageCauser);
+                         float Damage,
+                         const UDamageType* DamageType,
+                         AController* InstigatedBy,
+                         AActor* DamageCauser);
 };

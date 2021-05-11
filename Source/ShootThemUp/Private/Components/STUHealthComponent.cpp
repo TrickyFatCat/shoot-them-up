@@ -17,7 +17,8 @@ void USTUHealthComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    Health = bCustomInitialValue ? InitialHealth : MaxHealth;
+    Health = bCustomInitialHealth ? InitialHealth : MaxHealth;
+    Shield = bCustomInitialShield ? InitialShield : MaxShield;
 
     AActor* ComponentOwner = GetOwner();
 
@@ -33,7 +34,23 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
     class AController* InstigatedBy,
     AActor* DamageCauser)
 {
-    Health -= Damage;
+    if (Shield <= 0.f)
+    {
+        Health -= Damage;
+    }
+    else
+    {
+        if (Shield >= Damage)
+        {
+            Shield -= Damage;
+        }
+        else
+        {
+            Damage -= Shield;
+            Shield = 0.f;
+            Health -= Damage;
+        }
+    }
 
     if (DamageType)
     {
