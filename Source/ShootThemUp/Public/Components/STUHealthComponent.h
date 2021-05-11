@@ -43,7 +43,7 @@ private:
     float Health = 0.f;
     UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetMaxHealth, Category="Health", meta=(AllowPrivateAccess="true"))
     float MaxHealth = 100.f;
-    UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
+    UPROPERTY(EditAnywhere, Category="Health", meta=(AllowPrivateAccess="true"))
     bool bCustomInitialHealth = false;
     UPROPERTY(EditAnywhere,
         BlueprintGetter=GetInitialHealth,
@@ -71,7 +71,7 @@ private:
     float Shield = 0.f;
     UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetMaxShield, Category="Shield", meta=(AllowPrivateAccess="true"))
     float MaxShield = 100.f;
-    UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
+    UPROPERTY(EditAnywhere, Category="Shield", meta=(AllowPrivateAccess="true"))
     bool bCustomInitialShield = false;
     UPROPERTY(EditAnywhere, BlueprintGetter=GetInitialShield, Category="Shield", meta=(AllowPrivateAccess="true", ClampMin="0.0", EditCondition="bCustomInitialShield"))
     float InitialShield = 100.f;
