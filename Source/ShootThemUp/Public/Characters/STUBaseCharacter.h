@@ -65,10 +65,14 @@ private:
 
     // Health and damage
 public:
+protected:
+    UPROPERTY(EditDefaultsOnly, Category="Animation")
+    UAnimMontage* DeathAnimMontage = nullptr;
 private:
+    const float DestroyTime = 5.f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
     USTUHealthComponent* HealthComponent = nullptr;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
     UTextRenderComponent* HealthTextComponent = nullptr;
-
+    void OnDeath();
 };

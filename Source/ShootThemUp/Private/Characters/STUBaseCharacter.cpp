@@ -35,6 +35,9 @@ void ASTUBaseCharacter::BeginPlay()
 
     check(HealthComponent);
     check(HealthTextComponent);
+    check(GetCharacterMovement());
+
+    HealthComponent->OnDeath.AddUObject(this, &ASTUBaseCharacter::OnDeath);
 }
 
 void ASTUBaseCharacter::Tick(float DeltaTime)
@@ -120,6 +123,14 @@ void ASTUBaseCharacter::StartSprinting()
 void ASTUBaseCharacter::StopSprinting()
 {
     bSprintPressed = false;
+}
+
+void ASTUBaseCharacter::OnDeath()
+{
+    PlayAnimMontage(DeathAnimMontage);
+
+    GetCharacterMovement()->DisableMovement();
+    SetLifeSpan(DestroyTime);
 }
 
 
