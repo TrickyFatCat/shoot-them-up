@@ -26,30 +26,48 @@ void USTUHealthComponent::BeginPlay()
     }
 }
 
-void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
-    float Damage,
-    const class UDamageType* DamageType,
-    class AController* InstigatedBy,
-    AActor* DamageCauser)
+void USTUHealthComponent::DecreaseHealth(const float Amount)
 {
+    if (Amount <= 0.f || Health <= 0.f) return;
+    
+    Health = FMath::Max(Health - Amount, 0.f);
+
+    if (GetIsDead())
+    {
+        OnDeath.Broadcast();
+    }
+}
+
+void USTUHealthComponent::DecreaseShield(const float Amount)
+{
+    if (Amount <= 0.f || Shield <= 0.f) return;
+    
+    Shield = FMath::Max(Shield - Amount, 0.f);
+}
+
+void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
+                                          float Damage,
+                                          const class UDamageType* DamageType,
+                                          class AController* InstigatedBy,
+                                          AActor* DamageCauser)
+{
+    if (Damage <= 0.f || GetIsDead()) return;
+
     if (Shield <= 0.f)
     {
-        Health -= Damage;
+        DecreaseHealth(Damage);
     }
     else
     {
         if (Shield >= Damage)
         {
-            Shield -= Damage;
+            DecreaseShield(Damage);
         }
         else
         {
             Damage -= Shield;
-            Shield = 0.f;
-            Health -= Damage;
-        }
-    }
-
+            DecreaseShield(Shield);
+            DecreaseHealth(Damage);
         }
     }
 }
