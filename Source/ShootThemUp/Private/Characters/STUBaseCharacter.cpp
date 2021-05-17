@@ -38,8 +38,8 @@ void ASTUBaseCharacter::BeginPlay()
     check(HealthTextComponent);
     check(GetCharacterMovement());
 
-    OnHealthChanged(HealthComponent->GetHealth(), 0.f);
-    OnShieldChanged(HealthComponent->GetShield(), 0.f);
+    OnHealthChanged(HealthComponent->GetHealth());
+    OnShieldChanged(HealthComponent->GetShield());
     HealthComponent->OnDeath.AddUObject(this, &ASTUBaseCharacter::OnDeath);
     HealthComponent->OnHealthChanged.AddUObject(this, &ASTUBaseCharacter::OnHealthChanged);
     HealthComponent->OnShieldChanged.AddUObject(this, &ASTUBaseCharacter::OnShieldChanged);
@@ -140,12 +140,12 @@ void ASTUBaseCharacter::OnDeath()
     }
 }
 
-void ASTUBaseCharacter::OnHealthChanged(const float Health, const float DeltaHealth)
+void ASTUBaseCharacter::OnHealthChanged(const float Health)
 {
     HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
-void ASTUBaseCharacter::OnShieldChanged(const float Shield, const float DeltaShield)
+void ASTUBaseCharacter::OnShieldChanged(const float Shield)
 {
     HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Shield)));
 }

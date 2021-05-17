@@ -75,6 +75,6 @@ private:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
     UTextRenderComponent* HealthTextComponent = nullptr;
     void OnDeath();
-    void OnHealthChanged(const float Health, const float DeltaHealth);
-    void OnShieldChanged(const float Shield, const float DeltaShield);
+    void OnHealthChanged(const float Health);
+    void OnShieldChanged(const float Shield);
 };

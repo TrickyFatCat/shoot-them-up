@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Objects/Resource.h"
 #include "STUHealthComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnDeath)
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float)
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnShieldChanged, float, float)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnShieldChanged, float)
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
@@ -23,59 +24,41 @@ private:
 
     // Health
 public:
-    UFUNCTION(BlueprintGetter)
-    float GetHealth() const { return Health; }
-
-    UFUNCTION(BlueprintGetter)
-    float GetMaxHealth() const { return MaxHealth; }
-
-    UFUNCTION(BlueprintGetter)
-    float GetInitialHealth() const { return InitialHealth; }
-    UFUNCTION(BlueprintCallable, Category="Health")
-    void DecreaseHealth(const float Amount);
     UFUNCTION(BlueprintPure)
-    bool GetIsDead() const { return Health <= 0.f; }
+    float GetHealth() const { return HealthObject->GetValue(); }
+    UFUNCTION(BlueprintPure)
+    float GetMaxHealth() const { return HealthObject->GetValueMax(); }
+    UFUNCTION(BlueprintCallable, Category="Health")
+    void DecreaseHealth(const float DeltaHealth);
+    UFUNCTION(BlueprintPure)
+    bool GetIsDead() const { return GetHealth() <= 0.f; }
     FOnDeath OnDeath;
     FOnHealthChanged OnHealthChanged;
+    void BroadcastOnHealthChanged(const float CurrentHealth);
 
 private:
-    UPROPERTY(BlueprintGetter=GetHealth, Category="Health", meta=(AllowPrivateAccess="true"))
-    float Health = 0.f;
-    UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetMaxHealth, Category="Health", meta=(AllowPrivateAccess="true"))
-    float MaxHealth = 100.f;
-    UPROPERTY(EditAnywhere, Category="Health", meta=(AllowPrivateAccess="true"))
-    bool bCustomInitialHealth = false;
-    UPROPERTY(EditAnywhere,
-        BlueprintGetter=GetInitialHealth,
-        Category="Health",
-        meta=(AllowPrivateAccess="true", ClampMin="1.0", EditCondition="bCustomInitialHealth"))
-    float InitialHealth = 100.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess="true"))
+    FResourceData HealthData;
+    UPROPERTY()
+    UResource* HealthObject = nullptr;
 
     // Shield 
 public:
-    UFUNCTION(BlueprintGetter)
-    float GetShield() const { return Shield; }
-
-    UFUNCTION(BlueprintGetter)
-    float GetMaxShield() const { return MaxShield; }
-
-    UFUNCTION(BlueprintGetter)
-    float GetInitialShield() const { return InitialShield; }
-
+    UFUNCTION(BlueprintPure)
+    float GetShield() const { return ShieldObject->GetValue(); }
+    UFUNCTION(BlueprintPure)
+    float GetMaxShield() const { return ShieldObject->GetValueMax(); }
     UFUNCTION(BlueprintCallable, Category="Shield")
-    void DecreaseShield(const float Amount);
+    void DecreaseShield(const float DeltaShield);
     FOnShieldChanged OnShieldChanged;
+    void BroadcastOnShieldChanged(const float CurrentShield);
 
 private:
-    UPROPERTY(BlueprintGetter=GetShield, Category="Shield", meta=(AllowPrivateAccess="true"))
-    float Shield = 0.f;
-    UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetMaxShield, Category="Shield", meta=(AllowPrivateAccess="true"))
-    float MaxShield = 100.f;
-    UPROPERTY(EditAnywhere, Category="Shield", meta=(AllowPrivateAccess="true"))
-    bool bCustomInitialShield = false;
-    UPROPERTY(EditAnywhere, BlueprintGetter=GetInitialShield, Category="Shield", meta=(AllowPrivateAccess="true", ClampMin="0.0", EditCondition="bCustomInitialShield"))
-    float InitialShield = 100.f;
-
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess="true"))
+    FResourceData ShieldData;
+    UPROPERTY()
+    UResource* ShieldObject = nullptr;
+    
     // Damage
 private:
     UFUNCTION()

@@ -3,22 +3,28 @@
 
 #include "Components/STUHealthComponent.h"
 #include "GameFramework/Actor.h"
+#include "Objects/Resource.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All, All)
 
 USTUHealthComponent::USTUHealthComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
+
 }
 
 void USTUHealthComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    Health = bCustomInitialHealth ? InitialHealth : MaxHealth;
-    OnHealthChanged.Broadcast(Health, 0.f);
-    Shield = bCustomInitialShield ? InitialShield : MaxShield;
-    OnShieldChanged.Broadcast(Shield, 0.f);
+    HealthObject = NewObject<UResource>(this, TEXT("Health"));
+    HealthObject->SetupResource(HealthData);
+    HealthObject->OnValueIncreased.AddUObject(this, &USTUHealthComponent::BroadcastOnHealthChanged);
+    HealthObject->OnValueDecreased.AddUObject(this, &USTUHealthComponent::BroadcastOnHealthChanged);
+    ShieldObject = NewObject<UResource>(this, TEXT("Shield"));
+    ShieldObject->OnValueIncreased.AddUObject(this, &USTUHealthComponent::BroadcastOnShieldChanged);
+    ShieldObject->OnValueDecreased.AddUObject(this, &USTUHealthComponent::BroadcastOnShieldChanged);
+    ShieldObject->SetupResource(ShieldData);
 
     AActor* ComponentOwner = GetOwner();
 
@@ -26,27 +32,37 @@ void USTUHealthComponent::BeginPlay()
     {
         ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
     }
+
 }
 
-void USTUHealthComponent::DecreaseHealth(const float Amount)
+void USTUHealthComponent::DecreaseHealth(const float DeltaHealth)
 {
-    if (Amount <= 0.f || Health <= 0.f) return;
+    if (DeltaHealth <= 0.f || GetHealth() <= 0.f) return;
     
-    Health = FMath::Max(Health - Amount, 0.f);
-    OnHealthChanged.Broadcast(Health, -Amount);
+    HealthObject->DecreaseValue(DeltaHealth, true);
 
     if (GetIsDead())
     {
+        ShieldObject->SetAutoIncreaseEnabled(false);
         OnDeath.Broadcast();
     }
 }
 
-void USTUHealthComponent::DecreaseShield(const float Amount)
+void USTUHealthComponent::BroadcastOnHealthChanged(const float CurrentHealth)
 {
-    if (Amount <= 0.f || Shield <= 0.f) return;
+    OnHealthChanged.Broadcast(CurrentHealth);
+}
+
+void USTUHealthComponent::DecreaseShield(const float DeltaShield)
+{
+    if (DeltaShield <= 0.f || GetShield()<= 0.f) return;
     
-    Shield = FMath::Max(Shield - Amount, 0.f);
-    OnShieldChanged.Broadcast(Shield, -Amount);
+    ShieldObject->DecreaseValue(DeltaShield, true);
+}
+
+void USTUHealthComponent::BroadcastOnShieldChanged(const float CurrentShield)
+{
+    OnShieldChanged.Broadcast(CurrentShield);
 }
 
 void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
@@ -57,20 +73,22 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
 {
     if (Damage <= 0.f || GetIsDead()) return;
 
-    if (Shield <= 0.f)
+    const float CurrentShield = GetShield();
+
+    if (CurrentShield <= 0.f)
     {
         DecreaseHealth(Damage);
     }
     else
     {
-        if (Shield >= Damage)
+        if (CurrentShield >= Damage)
         {
             DecreaseShield(Damage);
         }
         else
         {
-            Damage -= Shield;
-            DecreaseShield(Shield);
+            Damage -= CurrentShield;
+            DecreaseShield(CurrentShield);
             DecreaseHealth(Damage);
         }
     }
