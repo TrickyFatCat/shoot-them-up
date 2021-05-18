@@ -32,7 +32,12 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
 void ASTUBaseCharacter::BeginPlay()
 {
     Super::BeginPlay();
-    DefaultInputYawScale = Cast<ASTUPlayerController>(GetController())->InputYawScale;
+    AController* CurrentController = GetController();
+
+    if (CurrentController)
+    {
+        DefaultInputYawScale = Cast<ASTUPlayerController>(CurrentController)->InputYawScale;
+    }
 
     check(HealthComponent);
     check(HealthTextComponent);
