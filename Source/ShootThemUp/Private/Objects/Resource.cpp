@@ -3,64 +3,71 @@
 
 #include "Resource.h"
 
-#include "Math/UnitConversion.h"
+void UResource::SetResourceData(const FResourceData& NewResourceData)
+{
+	ResourceData = NewResourceData;
+	ResourceData.Value = ResourceData.bCustomInitialValue ? ResourceData.ValueInitial : ResourceData.ValueMax;
+	ResourceData.AutoIncreaseTime = 1 / ResourceData.AutoIncreaseFrequency;
+}
 
 void UResource::SetValue(const float NewValue)
 {
-	if (NewValue < 0.f || Value <= 0.f) return;
+	if (NewValue < 0.f || ResourceData.Value <= 0.f) return;
 
-	Value = NewValue;
+	ResourceData.Value = NewValue;
 }
 
 void UResource::SetValueMax(const float NewValue)
 {
 	if (NewValue <= 0.f) return;
 
-	ValueMax = NewValue;
+	ResourceData.ValueMax = NewValue;
 }
 
-void UResource::DecreaseValue(const float DeltaValue, const bool bClampToZero)
+void UResource::DecreaseValue(const float DeltaValue)
 {
 	if (DeltaValue <= 0.f) return;
 
-	Value -= DeltaValue;
+	ResourceData.Value = FMath::Max(ResourceData.Value - DeltaValue, 0.f);
 
-	if (bClampToZero)
+	if (ResourceData.bAutoIncreaseEnabled && GetNormalizedValue() < ResourceData.AutoIncreaseThreshold)
 	{
-		Value = FMath::Max(Value - DeltaValue, 0.f);
+		if (ResourceData.AutoIncreaseDelay > 0.f)
+		{
+			StartAutoIncreaseDelay();
+		}
+		else
+		{
+			StartAutoIncrease();
+		}
 	}
 
-	if (bAutoIncreaseEnabled)
-	{
-		StartAutoIncreaseDelay();
-	}
-
-	OnValueDecreased.Broadcast(Value);
+	OnValueDecreased.Broadcast(ResourceData.Value);
 }
 
 void UResource::IncreaseValue(const float DeltaValue, const bool bClampToMax)
 {
 	if (DeltaValue <= 0.f) return;
 
-	Value += DeltaValue;
+	ResourceData.Value += DeltaValue;
 
 	if (bClampToMax)
 	{
-		Value = FMath::Min(Value, ValueMax);
+		ResourceData.Value = FMath::Min(ResourceData.Value, ResourceData.ValueMax);
 	}
 
-	OnValueIncreased.Broadcast(Value);
+	OnValueIncreased.Broadcast(ResourceData.Value);
 }
 
 void UResource::DecreaseValueMax(const float DeltaValue, const bool bClampValue)
 {
 	if (DeltaValue <= 0.f) return;
 
-	ValueMax -= DeltaValue;
+	ResourceData.ValueMax -= DeltaValue;
 
 	if (bClampValue)
 	{
-		Value = FMath::Min(Value, ValueMax);
+		ResourceData.Value = FMath::Min(ResourceData.Value, ResourceData.ValueMax);
 	}
 
 	OnValueMaxChanged.Broadcast();
@@ -70,45 +77,25 @@ void UResource::IncreaseValueMax(const float DeltaValue, const bool bClampValue)
 {
 	if (DeltaValue <= 0.f)
 
-		ValueMax += DeltaValue;
+		ResourceData.ValueMax += DeltaValue;
 
 	if (bClampValue)
 	{
-		Value = ValueMax;
+		ResourceData.Value = ResourceData.ValueMax;
 	}
 
 	OnValueMaxChanged.Broadcast();
 }
 
-void UResource::SetupResource(const FResourceData ResourceData)
-{
-	Value = ResourceData.bCustomInitialValue ? ResourceData.ValueInitial : ResourceData.ValueMax;
-	ValueMax = ResourceData.ValueMax;
-	bAutoIncreaseEnabled = ResourceData.bAutoIncreaseEnabled;
-	AutoIncreaseThreshold = ResourceData.AutoIncreaseThreshold;
-	AutoIncreaseDelay = ResourceData.AutoIncreaseDelay;
-	SetAutoIncreaseFrequency(ResourceData.AutoIncreaseFrequency);
-	AutoIncreaseValue = ResourceData.AutoIncreaseValue;
-}
-
 void UResource::SetAutoIncreaseEnabled(const bool bIsEnabled, const bool bStopAutoIncrease)
 {
-	if (bAutoIncreaseEnabled == bIsEnabled) return;
+	if (ResourceData.bAutoIncreaseEnabled == bIsEnabled) return;
 
-	bAutoIncreaseEnabled = bIsEnabled;
+	ResourceData.bAutoIncreaseEnabled = bIsEnabled;
 
 	if (!bIsEnabled && bStopAutoIncrease)
 	{
-		UObject* Owner = GetOuter();
-
-		if (!Owner) return;
-		
-		FTimerManager& TimerManager = Owner->GetWorld()->GetTimerManager();
-
-		if (TimerManager.IsTimerActive(AutoIncreaseHandle))
-		{
-			TimerManager.ClearTimer(AutoIncreaseHandle);
-		}
+		StopTimer(AutoIncreaseHandle);
 	}
 }
 
@@ -116,55 +103,46 @@ void UResource::SetAutoIncreaseFrequency(const float NewFrequency)
 {
 	if (NewFrequency <= 0.f) return;
 
-	AutoIncreaseFrequency = NewFrequency;
-	AutoIncreaseTime = 1.f / NewFrequency;
+	ResourceData.AutoIncreaseFrequency = NewFrequency;
+	ResourceData.AutoIncreaseTime = 1.f / NewFrequency;
 }
 
 void UResource::StartAutoIncreaseDelay()
 {
-	UObject* Owner = GetOuter();
-
-	if (!Owner) return;
-
-	FTimerManager& TimerManager = Owner->GetWorld()->GetTimerManager();
-
-	if (TimerManager.IsTimerActive(AutoIncreaseHandle))
-	{
-		TimerManager.ClearTimer(AutoIncreaseHandle);
-	}
-
-	TimerManager.SetTimer(AutoIncreaseHandle,
-	                      this,
-	                      &UResource::StartAutoIncrease,
-	                      AutoIncreaseDelay,
-	                      false);
+	StopTimer(AutoIncreaseHandle);
+	GetWorld()->GetTimerManager().SetTimer(AutoIncreaseHandle,
+	                                       this,
+	                                       &UResource::StartAutoIncrease,
+	                                       ResourceData.AutoIncreaseDelay,
+	                                       false);
 }
 
 void UResource::StartAutoIncrease()
 {
-	UObject* Owner = GetOuter();
-
-	if (!Owner) return;
-
-	FTimerManager& TimerManager = Owner->GetWorld()->GetTimerManager();
-	TimerManager.SetTimer(AutoIncreaseHandle, this, &UResource::ProcessAutoIncrease, AutoIncreaseTime, true);
+	StopTimer(AutoIncreaseHandle);
+	GetWorld()->GetTimerManager().SetTimer(AutoIncreaseHandle,
+	                                       this,
+	                                       &UResource::ProcessAutoIncrease,
+	                                       ResourceData.AutoIncreaseTime,
+	                                       true);
 }
 
 void UResource::ProcessAutoIncrease()
 {
-	IncreaseValue(AutoIncreaseValue, false);
+	IncreaseValue(ResourceData.AutoIncreaseValue, false);
 
-	if (Value / ValueMax >= AutoIncreaseThreshold)
+	if (ResourceData.Value / ResourceData.ValueMax >= ResourceData.AutoIncreaseThreshold)
 	{
-		UObject* Owner = GetOuter();
+		StopTimer(AutoIncreaseHandle);
+	}
+}
 
-		if (!Owner) return;
+void UResource::StopTimer(FTimerHandle& TimerHandle) const
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 
-		FTimerManager& TimerManager = Owner->GetWorld()->GetTimerManager();
-
-		if (TimerManager.IsTimerActive(AutoIncreaseHandle))
-		{
-			TimerManager.ClearTimer(AutoIncreaseHandle);
-		}
+	if (TimerManager.IsTimerActive(TimerHandle))
+	{
+		TimerManager.ClearTimer(TimerHandle);
 	}
 }

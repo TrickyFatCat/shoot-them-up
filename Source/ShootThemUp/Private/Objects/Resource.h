@@ -10,23 +10,42 @@ USTRUCT(BlueprintType)
 struct FResourceData
 {
 	GENERATED_USTRUCT_BODY()
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
+	float Value = 100.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Base Parameters", meta=(ClampMin="0.0"))
 	float ValueMax = 100.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Base Parameters")
 	bool bCustomInitialValue = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bCustomInitialValue"))
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="Base Parameters",
+		meta=(EditCondition="bCustomInitialValue", ClampMin="0.0"))
 	float ValueInitial = 100.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	
+	// AutoIncrease Data
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AutoIncrease")
 	bool bAutoIncreaseEnabled = false;
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
+		Category="AutoIncrease",
 		meta=(EditCondition="bAutoIncreaseEnabled", ClampMin="0.0", ClampMax="1.0"))
 	float AutoIncreaseThreshold = 1.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bAutoIncreaseEnabled", ClampMin="0.0"))
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="AutoIncrease",
+		meta=(EditCondition="bAutoIncreaseEnabled", ClampMin="0.0"))
 	float AutoIncreaseDelay = 1.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bAutoIncreaseEnabled", ClampMin="0.0"))
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="AutoIncrease",
+		meta=(EditCondition="bAutoIncreaseEnabled", ClampMin="0.0"))
 	float AutoIncreaseFrequency = 1.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bAutoIncreaseEnabled", ClampMin="0.0"))
+	UPROPERTY()
+	float AutoIncreaseTime = 1.f;
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="AutoIncrease",
+		meta=(EditCondition="bAutoIncreaseEnabled", ClampMin="0.0"))
 	float AutoIncreaseValue = 1.f;
 };
 
@@ -43,15 +62,16 @@ class SHOOTTHEMUP_API UResource : public UObject
 {
 	GENERATED_BODY()
 public:
-	float GetValue() const { return Value; }
+	void SetResourceData(const FResourceData& NewResourceData);
+	float GetValue() const { return ResourceData.Value; }
 	void SetValue(const float NewValue);
-	float GetValueMax() const { return ValueMax; }
+	float GetValueMax() const { return ResourceData.ValueMax; }
 	void SetValueMax(const float NewValue);
-	void DecreaseValue(const float DeltaValue, const bool bClampToZero);
+	float GetNormalizedValue() const { return ResourceData.Value / ResourceData.ValueMax; }
+	void DecreaseValue(const float DeltaValue);
 	void IncreaseValue(const float DeltaValue, const bool bClampToMax);
 	void DecreaseValueMax(const float DeltaValue, const bool bClampValue);
 	void IncreaseValueMax(const float DeltaValue, const bool bClampValue);
-	void SetupResource(const FResourceData ResourceData);
 	void SetAutoIncreaseEnabled(const bool bIsEnabled, const bool bStopAutoIncrease = true);
 	void SetAutoIncreaseFrequency(const float NewFrequency);
 	FOnValueIncreased OnValueIncreased;
@@ -59,17 +79,10 @@ public:
 	FOnValueMaxChanged OnValueMaxChanged;
 
 protected:
-	float Value = 100.f;
-	float ValueMax = 100.f;
-	// Auto increase
-	bool bAutoIncreaseEnabled = false;
-	float AutoIncreaseThreshold = 1.f;
-	float AutoIncreaseDelay = 3.f;
-	float AutoIncreaseFrequency = 1.f;
-	float AutoIncreaseTime = 1.f;
-	float AutoIncreaseValue = 1.f;
+	FResourceData ResourceData;
 	FTimerHandle AutoIncreaseHandle;
 	void StartAutoIncreaseDelay();
 	void StartAutoIncrease();
 	void ProcessAutoIncrease();
+	void StopTimer(FTimerHandle& TimerHandle) const;
 };

@@ -18,13 +18,13 @@ void USTUHealthComponent::BeginPlay()
     Super::BeginPlay();
 
     HealthObject = NewObject<UResource>(this, TEXT("Health"));
-    HealthObject->SetupResource(HealthData);
+    HealthObject->SetResourceData(HealthData);
     HealthObject->OnValueIncreased.AddUObject(this, &USTUHealthComponent::BroadcastOnHealthChanged);
     HealthObject->OnValueDecreased.AddUObject(this, &USTUHealthComponent::BroadcastOnHealthChanged);
     ShieldObject = NewObject<UResource>(this, TEXT("Shield"));
     ShieldObject->OnValueIncreased.AddUObject(this, &USTUHealthComponent::BroadcastOnShieldChanged);
     ShieldObject->OnValueDecreased.AddUObject(this, &USTUHealthComponent::BroadcastOnShieldChanged);
-    ShieldObject->SetupResource(ShieldData);
+    ShieldObject->SetResourceData(ShieldData);
 
     AActor* ComponentOwner = GetOwner();
 
@@ -39,7 +39,7 @@ void USTUHealthComponent::DecreaseHealth(const float DeltaHealth)
 {
     if (DeltaHealth <= 0.f || GetHealth() <= 0.f) return;
     
-    HealthObject->DecreaseValue(DeltaHealth, true);
+    HealthObject->DecreaseValue(DeltaHealth);
 
     if (GetIsDead())
     {
@@ -57,7 +57,7 @@ void USTUHealthComponent::DecreaseShield(const float DeltaShield)
 {
     if (DeltaShield <= 0.f || GetShield()<= 0.f) return;
     
-    ShieldObject->DecreaseValue(DeltaShield, true);
+    ShieldObject->DecreaseValue(DeltaShield);
 }
 
 void USTUHealthComponent::BroadcastOnShieldChanged(const float CurrentShield)
@@ -75,7 +75,7 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
 
     const float CurrentShield = GetShield();
 
-    if (CurrentShield <= 0.f)
+    if (CurrentShield <= 0.f || GetMaxShield() <= 0.f)
     {
         DecreaseHealth(Damage);
     }
