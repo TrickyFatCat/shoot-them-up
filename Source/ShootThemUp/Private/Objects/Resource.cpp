@@ -2,6 +2,8 @@
 
 
 #include "Resource.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
 
 void UResource::SetResourceData(const FResourceData& NewResourceData)
 {
@@ -9,8 +11,8 @@ void UResource::SetResourceData(const FResourceData& NewResourceData)
 	ResourceData.Value = ResourceData.bCustomInitialValue ? ResourceData.ValueInitial : ResourceData.ValueMax;
 	ResourceData.AutoIncreaseTime = 1 / ResourceData.AutoIncreaseFrequency;
 	ResourceData.AutoDecreaseTime = 1 / ResourceData.AutoDecreaseFrequency;
-	CheckAndStartAutoIncrease();
-	CheckAndStartAutoDecrease();
+	StartAutoIncrease();
+	StartAutoDecrease();
 }
 
 void UResource::SetValue(const float NewValue)
@@ -32,7 +34,7 @@ void UResource::DecreaseValue(const float DeltaValue)
 	if (DeltaValue <= 0.f) return;
 
 	ResourceData.Value = FMath::Max(ResourceData.Value - DeltaValue, 0.f);
-	CheckAndStartAutoIncrease();
+	StartAutoIncrease();
 	OnValueDecreased.Broadcast(ResourceData.Value);
 }
 
@@ -47,7 +49,7 @@ void UResource::IncreaseValue(const float DeltaValue, const bool bClampToMax)
 		ResourceData.Value = FMath::Min(ResourceData.Value, ResourceData.ValueMax);
 	}
 
-	CheckAndStartAutoDecrease();
+	StartAutoDecrease();
 	OnValueIncreased.Broadcast(ResourceData.Value);
 }
 
@@ -119,38 +121,17 @@ void UResource::SetAutoDecreaseFrequency(const float NewFrequency)
 	ResourceData.AutoDecreaseTime = 1.f / NewFrequency;
 }
 
-void UResource::CheckAndStartAutoIncrease()
+void UResource::StartAutoIncrease()
 {
 	if (!ResourceData.bAutoIncreaseEnabled || GetNormalizedValue() >= ResourceData.AutoIncreaseThreshold) return;
 
-	if (ResourceData.AutoIncreaseDelay > 0.f)
-	{
-		StartAutoIncreaseDelay();
-	}
-	else
-	{
-		StartAutoIncrease();
-	}
-}
-
-void UResource::StartAutoIncreaseDelay()
-{
-	StopTimer(AutoIncreaseHandle);
-	GetWorld()->GetTimerManager().SetTimer(AutoIncreaseHandle,
-	                                       this,
-	                                       &UResource::StartAutoIncrease,
-	                                       ResourceData.AutoIncreaseDelay,
-	                                       false);
-}
-
-void UResource::StartAutoIncrease()
-{
 	StopTimer(AutoIncreaseHandle);
 	GetWorld()->GetTimerManager().SetTimer(AutoIncreaseHandle,
 	                                       this,
 	                                       &UResource::ProcessAutoIncrease,
 	                                       ResourceData.AutoIncreaseTime,
-	                                       true);
+	                                       true,
+	                                       ResourceData.AutoIncreaseDelay);
 }
 
 void UResource::ProcessAutoIncrease()
@@ -163,38 +144,17 @@ void UResource::ProcessAutoIncrease()
 	}
 }
 
-void UResource::CheckAndStartAutoDecrease()
+void UResource::StartAutoDecrease()
 {
 	if (!ResourceData.bAutoDecreaseEnabled || GetNormalizedValue() <= ResourceData.AutoDecreaseThreshold) return;
 
-	if (ResourceData.AutoDecreaseDelay > 0.f)
-	{
-		StartAutoDecreaseDelay();
-	}
-	else
-	{
-		StartAutoDecrease();
-	}
-}
-
-void UResource::StartAutoDecreaseDelay()
-{
-	StopTimer(AutoDecreaseHandle);
-	GetWorld()->GetTimerManager().SetTimer(AutoDecreaseHandle,
-	                                       this,
-	                                       &UResource::StartAutoDecrease,
-	                                       ResourceData.AutoDecreaseDelay,
-	                                       false);
-}
-
-void UResource::StartAutoDecrease()
-{
 	StopTimer(AutoDecreaseHandle);
 	GetWorld()->GetTimerManager().SetTimer(AutoDecreaseHandle,
 	                                       this,
 	                                       &UResource::ProcessAutoDecrease,
 	                                       ResourceData.AutoDecreaseTime,
-	                                       true);
+	                                       true,
+	                                       ResourceData.AutoDecreaseDelay);
 }
 
 void UResource::ProcessAutoDecrease()

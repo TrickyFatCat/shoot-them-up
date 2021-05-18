@@ -108,15 +108,11 @@ public:
 protected:
 	// AutoIncrease
 	FTimerHandle AutoIncreaseHandle;
-	void CheckAndStartAutoIncrease();
-	void StartAutoIncreaseDelay();
 	void StartAutoIncrease();
 	void ProcessAutoIncrease();
 	
 	// AutoDecrease
 	FTimerHandle AutoDecreaseHandle;
-	void CheckAndStartAutoDecrease();
-	void StartAutoDecreaseDelay();
 	void StartAutoDecrease();
 	void ProcessAutoDecrease();
 	
