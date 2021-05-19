@@ -48,6 +48,7 @@ void USTUHealthComponent::DecreaseHealth(const float DeltaHealth)
     }
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void USTUHealthComponent::BroadcastOnHealthChanged(const float CurrentHealth)
 {
     OnHealthChanged.Broadcast(CurrentHealth);
@@ -60,6 +61,7 @@ void USTUHealthComponent::DecreaseShield(const float DeltaShield)
     ShieldObject->DecreaseValue(DeltaShield);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void USTUHealthComponent::BroadcastOnShieldChanged(const float CurrentShield)
 {
     OnShieldChanged.Broadcast(CurrentShield);
@@ -75,9 +77,14 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
 
     const float CurrentShield = GetShield();
 
-    if (CurrentShield <= 0.f || GetMaxShield() <= 0.f)
+    if (CurrentShield <= 0.f)
     {
         DecreaseHealth(Damage);
+        
+        if (ShieldObject->GetResourceData().bAutoIncreaseEnabled)
+        {
+            ShieldObject->StopAutoIncrease();
+        }
     }
     else
     {

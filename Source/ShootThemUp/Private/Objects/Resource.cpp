@@ -11,6 +11,20 @@ void UResource::SetResourceData(const FResourceData& NewResourceData)
 	ResourceData.Value = ResourceData.bCustomInitialValue ? ResourceData.ValueInitial : ResourceData.ValueMax;
 	ResourceData.AutoIncreaseTime = 1 / ResourceData.AutoIncreaseFrequency;
 	ResourceData.AutoDecreaseTime = 1 / ResourceData.AutoDecreaseFrequency;
+	
+	if (ResourceData.ValueMax <= 0)
+	{
+		if (ResourceData.bAutoIncreaseEnabled)
+		{
+			ResourceData.bAutoIncreaseEnabled = false;
+		}
+
+		if (ResourceData.bAutoDecreaseEnabled)
+		{
+			ResourceData.bAutoDecreaseEnabled = false;
+		}
+	}
+	
 	StartAutoIncrease();
 	StartAutoDecrease();
 }
@@ -81,6 +95,13 @@ void UResource::IncreaseValueMax(const float DeltaValue, const bool bClampValue)
 	OnValueMaxChanged.Broadcast();
 }
 
+void UResource::StopAutoIncrease()
+{
+	if (!ResourceData.bAutoIncreaseEnabled) return;
+	
+	StopTimer(AutoIncreaseHandle);
+}
+
 void UResource::SetAutoIncreaseEnabled(const bool bIsEnabled, const bool bStopAutoIncrease)
 {
 	if (ResourceData.bAutoIncreaseEnabled == bIsEnabled) return;
@@ -99,6 +120,13 @@ void UResource::SetAutoIncreaseFrequency(const float NewFrequency)
 
 	ResourceData.AutoIncreaseFrequency = NewFrequency;
 	ResourceData.AutoIncreaseTime = 1.f / NewFrequency;
+}
+
+void UResource::StopAutoDecrease()
+{
+	if (!ResourceData.bAutoDecreaseEnabled) return;
+	
+	StopTimer(AutoDecreaseHandle);
 }
 
 void UResource::SteAutoDecreaseEnabled(const bool bIsEnabled, const bool bStopAutoDecrease)

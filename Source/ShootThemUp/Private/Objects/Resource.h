@@ -80,6 +80,7 @@ class SHOOTTHEMUP_API UResource : public UObject
 	GENERATED_BODY()
 public:
 	void SetResourceData(const FResourceData& NewResourceData);
+	FResourceData GetResourceData() const { return ResourceData; }
 	float GetValue() const { return ResourceData.Value; }
 	void SetValue(const float NewValue);
 	float GetValueMax() const { return ResourceData.ValueMax; }
@@ -93,10 +94,12 @@ public:
 	void IncreaseValueMax(const float DeltaValue, const bool bClampValue);
 	
 	// AutoIncrease functions
+	void StopAutoIncrease();
 	void SetAutoIncreaseEnabled(const bool bIsEnabled, const bool bStopAutoIncrease = true);
 	void SetAutoIncreaseFrequency(const float NewFrequency);
 	
 	// AutoDecrease functions
+	void StopAutoDecrease();
 	void SteAutoDecreaseEnabled(const bool bIsEnabled, const bool bStopAutoDecrease = true);
 	void SetAutoDecreaseFrequency(const float NewFrequency);
 	
