@@ -34,7 +34,6 @@ public:
     // Camera
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Camera")
-    ;
     float SprintInputYawScale = 0.5f;
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
@@ -62,13 +61,7 @@ protected:
     void MoveRight(const float AxisValue);
     void StartSprinting();
     void StopSprinting();
-
-    UPROPERTY(EditDefaultsOnly, Category="Movement")
-    FVector2D LandedDamageVelocity = FVector2D(900.f, 1200.f);
-    UPROPERTY(EditDefaultsOnly, Category="Movement")
-    FVector2D LandedDamage = FVector2D(10.f, 100.f);
-    UFUNCTION()
-    void OnGroundLanded(const FHitResult& Hit);
+    
     // Health and damage
 public:
 protected:
@@ -83,4 +76,12 @@ private:
     void OnDeath();
     void OnHealthChanged(const float Health);
     void OnShieldChanged(const float Shield);
+
+    // Landing damage
+    UPROPERTY(EditDefaultsOnly, Category="Damage")
+    FVector2D LandedDamageVelocity = FVector2D(900.f, 1200.f);
+    UPROPERTY(EditDefaultsOnly, Category="Damage")
+    FVector2D LandedDamage = FVector2D(10.f, 100.f);
+    UFUNCTION()
+    void OnGroundLanded(const FHitResult& Hit);
 };
