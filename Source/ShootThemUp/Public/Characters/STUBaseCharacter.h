@@ -54,7 +54,7 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Movement")
     float GetMovementDirection() const;
-private:
+protected:
     bool bIsMovingForward = false;
     bool bSprintPressed = false;
 
@@ -63,6 +63,12 @@ private:
     void StartSprinting();
     void StopSprinting();
 
+    UPROPERTY(EditDefaultsOnly, Category="Movement")
+    FVector2D LandedDamageVelocity = FVector2D(900.f, 1200.f);
+    UPROPERTY(EditDefaultsOnly, Category="Movement")
+    FVector2D LandedDamage = FVector2D(10.f, 100.f);
+    UFUNCTION()
+    void OnGroundLanded(const FHitResult& Hit);
     // Health and damage
 public:
 protected:
