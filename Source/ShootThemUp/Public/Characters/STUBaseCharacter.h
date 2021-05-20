@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UTextRenderComponent;
 class USTUHealthComponent;
+class ASTUBaseWeapon;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -84,4 +85,11 @@ private:
     FVector2D LandedDamage = FVector2D(10.f, 100.f);
     UFUNCTION()
     void OnGroundLanded(const FHitResult& Hit);
+
+    // Weapon
+public:
+    UPROPERTY(EditDefaultsOnly, Category="Weapon")
+    TSubclassOf<ASTUBaseWeapon> WeaponClass = nullptr;
+private:
+    void SpawnWeapon();
 };
