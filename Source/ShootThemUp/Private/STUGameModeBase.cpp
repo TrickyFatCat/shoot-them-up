@@ -4,9 +4,11 @@
 #include "STUGameModeBase.h"
 #include "Characters/STUBaseCharacter.h"
 #include "Characters/Controllers/STUPlayerController.h"
+#include "UI/STUGameHUD.h"
 
 ASTUGameModeBase::ASTUGameModeBase()
 {
     DefaultPawnClass = ASTUBaseCharacter::StaticClass();
     PlayerControllerClass = ASTUPlayerController::StaticClass();
+    HUDClass = ASTUGameHUD::StaticClass();
 }
