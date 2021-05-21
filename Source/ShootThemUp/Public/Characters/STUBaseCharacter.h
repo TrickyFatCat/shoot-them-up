@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UTextRenderComponent;
 class USTUHealthComponent;
 class ASTUBaseWeapon;
+class USTUWeaponComponent;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -87,9 +88,6 @@ private:
     void OnGroundLanded(const FHitResult& Hit);
 
     // Weapon
-public:
-    UPROPERTY(EditDefaultsOnly, Category="Weapon")
-    TSubclassOf<ASTUBaseWeapon> WeaponClass = nullptr;
-private:
-    void SpawnWeapon();
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
+    USTUWeaponComponent* WeaponComponent = nullptr;
 };
