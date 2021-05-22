@@ -16,7 +16,7 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
 
 public:
     USTUWeaponComponent();
-    void Fire() const;
+    void Fire();
 
 protected:
     virtual void BeginPlay() override;

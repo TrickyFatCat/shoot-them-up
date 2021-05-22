@@ -11,7 +11,8 @@ USTUWeaponComponent::USTUWeaponComponent()
     PrimaryComponentTick.bCanEverTick = true;
 }
 
-void USTUWeaponComponent::Fire() const
+// ReSharper disable once CppMemberFunctionMayBeConst
+void USTUWeaponComponent::Fire()
 {
     if (!CurrentWeapon) return;
 
