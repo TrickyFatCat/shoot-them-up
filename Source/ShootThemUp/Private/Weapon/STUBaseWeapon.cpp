@@ -36,13 +36,7 @@ void ASTUBaseWeapon::MakeShot()
 
     if (!World) return;
 
-    FVector ViewLocation;
-    FRotator ViewRotation;
-    
-    if (!GetPlayerViewPoint(ViewLocation, ViewRotation)) return;
-    
-    FVector TraceStart;
-    FVector TraceEnd;
+    FVector TraceStart, TraceEnd;
     
     if (!GetTraceData(TraceStart, TraceEnd)) return;
 
@@ -105,7 +99,7 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     FVector ViewLocation;
     FRotator ViewRotation;
     
-    if (GetPlayerViewPoint(ViewLocation, ViewRotation)) return false;
+    if (!GetPlayerViewPoint(ViewLocation, ViewRotation)) return false;
 
     TraceStart = ViewLocation;
     const FVector TraceDirection = ViewRotation.Vector();
@@ -113,7 +107,7 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     return true;
 }
 
-void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd)
+void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const
 {
     const UWorld* World = GetWorld();
 
