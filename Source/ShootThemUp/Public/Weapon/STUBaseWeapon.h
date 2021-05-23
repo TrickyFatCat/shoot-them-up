@@ -27,11 +27,14 @@ protected:
     FName MuzzleSocketName = "MuzzleSocket";
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     float MaxTraceDistance = 5000.f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    float DamageAmount = 10.f;
 
     void MakeShot();
     APlayerController* GetPlayerController() const;
     bool GetPlayerViewPoint(FVector& ViewLocation, FRotator &ViewRotation) const;
     FVector GetMuzzleWorldLocation() const;
     bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
-    void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd);
+    void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
+    void DealDamage(const FHitResult& HitResult);
 };

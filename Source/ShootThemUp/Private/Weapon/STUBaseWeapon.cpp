@@ -45,6 +45,7 @@ void ASTUBaseWeapon::MakeShot()
 
     if (HitResult.bBlockingHit)
     {
+        DealDamage(HitResult);
         DrawDebugLine(World,
                       GetMuzzleWorldLocation(),
                       HitResult.ImpactPoint,
@@ -120,4 +121,13 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
                                     TraceEnd,
                                     ECollisionChannel::ECC_Visibility,
                                     CollisionQueryParams);
+}
+
+void ASTUBaseWeapon::DealDamage(const FHitResult& HitResult)
+{
+    AActor* DamagedActor = HitResult.GetActor();
+
+    if (!DamagedActor) return;
+
+    DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
 }
