@@ -5,6 +5,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "Viewports.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 
@@ -31,56 +32,98 @@ void ASTUBaseWeapon::BeginPlay()
 
 void ASTUBaseWeapon::MakeShot()
 {
-    if (!GetWorld()) return;
+    UWorld* World = GetWorld();
 
-    const ACharacter* Player = Cast<ACharacter>(GetOwner());
-
-    if (!Player) return;
-
-    const AController* Controller = Player->GetController<APlayerController>();
-
-    if (!Controller) return;
+    if (!World) return;
 
     FVector ViewLocation;
     FRotator ViewRotation;
-    Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
-    const FTransform SocketTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
-    const FVector TraceStart = ViewLocation;
-    const FVector TraceDirection = ViewRotation.Vector();
-    const FVector TraceEnd = TraceStart + TraceDirection * MaxTraceDistance;
+    
+    if (!GetPlayerViewPoint(ViewLocation, ViewRotation)) return;
+    
+    FVector TraceStart;
+    FVector TraceEnd;
+    
+    if (!GetTraceData(TraceStart, TraceEnd)) return;
 
-    FCollisionQueryParams CollisionQueryParams;
-    CollisionQueryParams.AddIgnoredActor(GetOwner());
     FHitResult HitResult;
-    GetWorld()->LineTraceSingleByChannel(HitResult,
-                                         TraceStart,
-                                         TraceEnd,
-                                         ECollisionChannel::ECC_Visibility,
-                                         CollisionQueryParams);
+    MakeHit(HitResult, TraceStart, TraceEnd);
 
     if (HitResult.bBlockingHit)
     {
-        
-        DrawDebugLine(GetWorld(),
-                      SocketTransform.GetLocation(),
+        DrawDebugLine(World,
+                      GetMuzzleWorldLocation(),
                       HitResult.ImpactPoint,
                       FColor::Red,
                       false,
                       3.f,
                       0,
                       3.f);
-        DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.f, 24, FColor::Red, false, 5.f);
+        DrawDebugSphere(World, HitResult.ImpactPoint, 10.f, 24, FColor::Red, false, 5.f);
         UE_LOG(LogBaseWeapon, Display, TEXT("Bone: %s"), *HitResult.BoneName.ToString());
     }
     else
     {
-        DrawDebugLine(GetWorld(),
-                      SocketTransform.GetLocation(),
+        DrawDebugLine(World,
+                      GetMuzzleWorldLocation(),
                       TraceEnd,
                       FColor::Red,
                       false,
                       3.f,
                       0,
-                      3.f);
+                      3.f
+        );
     }
+}
+
+APlayerController* ASTUBaseWeapon::GetPlayerController() const
+{
+    const ACharacter* Player = Cast<ACharacter>(GetOwner());
+
+    if (!Player) return nullptr;
+
+    return Player->GetController<APlayerController>();
+}
+
+bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
+{
+    const APlayerController* Controller = GetPlayerController();
+
+    if (!Controller) return false;
+
+    Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+    return true;
+}
+
+FVector ASTUBaseWeapon::GetMuzzleWorldLocation() const
+{
+    return WeaponMesh->GetSocketLocation(MuzzleSocketName);
+}
+
+bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
+{
+    FVector ViewLocation;
+    FRotator ViewRotation;
+    
+    if (GetPlayerViewPoint(ViewLocation, ViewRotation)) return false;
+
+    TraceStart = ViewLocation;
+    const FVector TraceDirection = ViewRotation.Vector();
+    TraceEnd = TraceStart + TraceDirection * MaxTraceDistance;
+    return true;
+}
+
+void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd)
+{
+    const UWorld* World = GetWorld();
+
+    if (!World) return;
+    
+    FCollisionQueryParams CollisionQueryParams;
+    CollisionQueryParams.AddIgnoredActor(GetOwner());
+    World->LineTraceSingleByChannel(HitResult,
+                                    TraceStart,
+                                    TraceEnd,
+                                    ECollisionChannel::ECC_Visibility,
+                                    CollisionQueryParams);
 }

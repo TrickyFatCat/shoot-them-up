@@ -7,6 +7,7 @@
 #include "STUBaseWeapon.generated.h"
 
 class USkeletalMeshComponent;
+class APlayerController;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
@@ -28,4 +29,9 @@ protected:
     float MaxTraceDistance = 5000.f;
 
     void MakeShot();
+    APlayerController* GetPlayerController() const;
+    bool GetPlayerViewPoint(FVector& ViewLocation, FRotator &ViewRotation) const;
+    FVector GetMuzzleWorldLocation() const;
+    bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
+    void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd);
 };
