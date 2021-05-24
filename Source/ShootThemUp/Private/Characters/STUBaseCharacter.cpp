@@ -11,7 +11,7 @@
 #include "Components/TextRenderComponent.h"
 #include "Components/STUCharacterMovementComponent.h"
 #include "Components/STUHealthComponent.h"
-#include "Weapon/STUWeaponComponent.h"
+#include "Components/STUWeaponComponent.h"
 #include "Components/CapsuleComponent.h"
 
 ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
