@@ -16,7 +16,12 @@ class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 
 public:
     ASTUBaseWeapon();
-    virtual void Fire();
+    virtual void StartFire();
+    virtual void StopFire();
+    UFUNCTION(BlueprintGetter)
+    float GetRateOfFire() const { return RateOfFire; }
+    UFUNCTION(BlueprintSetter)
+    void SetRateOfFire(const float NewRate);
 
 protected:
     virtual void BeginPlay() override;
@@ -29,6 +34,10 @@ protected:
     float MaxTraceDistance = 5000.f;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     float DamageAmount = 10.f;
+    UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetRateOfFire, BlueprintSetter=SetRateOfFire)
+    float RateOfFire = 1.f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    float BulletSpread = 6.f;
 
     void MakeShot();
     APlayerController* GetPlayerController() const;
@@ -37,4 +46,9 @@ protected:
     bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
     void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
     void DealDamage(const FHitResult& HitResult);
+    float GetTimeBetweenShots() const { return TimeBetweenShots; }
+
+private:
+    FTimerHandle ShotTimerHandle;
+    float TimeBetweenShots = 1.f;
 };
