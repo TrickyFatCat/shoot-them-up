@@ -21,22 +21,10 @@ ASTUBaseWeapon::ASTUBaseWeapon()
 
 void ASTUBaseWeapon::StartFire()
 {
-    UE_LOG(LogBaseWeapon, Display, TEXT("Fire!"));
-    MakeShot();
-    GetWorldTimerManager().SetTimer(ShotTimerHandle, this, &ASTUBaseWeapon::MakeShot, TimeBetweenShots, true);
 }
 
 void ASTUBaseWeapon::StopFire()
 {
-    GetWorldTimerManager().ClearTimer(ShotTimerHandle);
-}
-
-void ASTUBaseWeapon::SetRateOfFire(const float NewRate)
-{
-    if (NewRate <= 0) return;
-
-    RateOfFire = NewRate;
-    TimeBetweenShots = 1.f / RateOfFire;
 }
 
 void ASTUBaseWeapon::BeginPlay()
@@ -46,43 +34,7 @@ void ASTUBaseWeapon::BeginPlay()
 
 void ASTUBaseWeapon::MakeShot()
 {
-    UWorld* World = GetWorld();
 
-    if (!World) return;
-
-    FVector TraceStart, TraceEnd;
-    
-    if (!GetTraceData(TraceStart, TraceEnd)) return;
-
-    FHitResult HitResult;
-    MakeHit(HitResult, TraceStart, TraceEnd);
-
-    if (HitResult.bBlockingHit)
-    {
-        DealDamage(HitResult);
-        DrawDebugLine(World,
-                      GetMuzzleWorldLocation(),
-                      HitResult.ImpactPoint,
-                      FColor::Red,
-                      false,
-                      3.f,
-                      0,
-                      3.f);
-        DrawDebugSphere(World, HitResult.ImpactPoint, 10.f, 24, FColor::Red, false, 5.f);
-        UE_LOG(LogBaseWeapon, Display, TEXT("Bone: %s"), *HitResult.BoneName.ToString());
-    }
-    else
-    {
-        DrawDebugLine(World,
-                      GetMuzzleWorldLocation(),
-                      TraceEnd,
-                      FColor::Red,
-                      false,
-                      3.f,
-                      0,
-                      3.f
-        );
-    }
 }
 
 APlayerController* ASTUBaseWeapon::GetPlayerController() const
@@ -117,8 +69,7 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     if (!GetPlayerViewPoint(ViewLocation, ViewRotation)) return false;
 
     TraceStart = ViewLocation;
-    const float ConeAngleRad = FMath::DegreesToRadians(BulletSpread * 0.5f);
-    const FVector TraceDirection = FMath::VRandCone(ViewRotation.Vector(), ConeAngleRad);
+    const FVector TraceDirection = ViewRotation.Vector();
     TraceEnd = TraceStart + TraceDirection * MaxTraceDistance;
     return true;
 }
