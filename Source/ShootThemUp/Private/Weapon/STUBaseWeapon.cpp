@@ -89,11 +89,4 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
                                     CollisionQueryParams);
 }
 
-void ASTUBaseWeapon::DealDamage(const FHitResult& HitResult)
-{
-    AActor* DamagedActor = HitResult.GetActor();
 
-    if (!DamagedActor) return;
-
-    DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
-}

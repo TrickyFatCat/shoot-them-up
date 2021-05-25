@@ -39,5 +39,4 @@ protected:
     FVector GetMuzzleWorldLocation() const;
     virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
     void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
-    void DealDamage(const FHitResult& HitResult);
 };

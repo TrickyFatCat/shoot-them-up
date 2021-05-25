@@ -33,4 +33,5 @@ private:
     float RateOfFire = 8.f;
     FTimerHandle ShotTimerHandle;
     float TimeBetweenShots = 1.f;
+    void DealDamage(const FHitResult& HitResult);
 };
