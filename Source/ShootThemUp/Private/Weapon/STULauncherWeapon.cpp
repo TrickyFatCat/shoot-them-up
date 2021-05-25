@@ -3,7 +3,6 @@
 
 #include "Weapon/STULauncherWeapon.h"
 #include "Weapon/STUProjectile.h"
-#include "Kismet/GameplayStatics.h"
 
 void ASTULauncherWeapon::StartFire()
 {
@@ -16,8 +15,25 @@ void ASTULauncherWeapon::StopFire()
 
 void ASTULauncherWeapon::MakeShot()
 {
-    const FTransform SpawnTransform(FRotator::ZeroRotator, GetMuzzleWorldLocation());
-    AActor* Projectile = UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(), ProjectileClass, SpawnTransform);
-    // Set projectile params
-    UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
+    UWorld* World = GetWorld();
+    
+    if (!World) return;
+
+    FVector TraceStart, TraceEnd;
+
+    if (!GetTraceData(TraceStart, TraceEnd)) return;
+
+    FHitResult HitResult;
+    MakeHit(HitResult, TraceStart, TraceEnd);
+
+    const FVector MuzzleLocation = GetMuzzleWorldLocation();
+    const FVector EndPoint = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
+    const FVector Direction = (EndPoint - MuzzleLocation).GetSafeNormal();
+    const FTransform SpawnTransform(FRotator::ZeroRotator, MuzzleLocation);
+    ASTUProjectile* Projectile = World->SpawnActorDeferred<ASTUProjectile>(ProjectileClass, SpawnTransform);
+    if (Projectile)
+    {
+        Projectile->SetShotDirection(Direction);
+        Projectile->FinishSpawning(SpawnTransform);
+    }
 }
