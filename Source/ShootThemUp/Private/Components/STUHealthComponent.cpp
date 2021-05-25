@@ -80,11 +80,8 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
     if (CurrentShield <= 0.f)
     {
         DecreaseHealth(Damage);
-        
-        if (ShieldObject->GetResourceData().bAutoIncreaseEnabled)
-        {
-            ShieldObject->StopAutoIncrease();
-        }
+        ShieldObject->StopAutoIncrease();
+        ShieldObject->StartAutoIncrease();
     }
     else
     {

@@ -94,11 +94,13 @@ public:
 	void IncreaseValueMax(const float DeltaValue, const bool bClampValue);
 	
 	// AutoIncrease functions
+	void StartAutoIncrease();
 	void StopAutoIncrease();
 	void SetAutoIncreaseEnabled(const bool bIsEnabled, const bool bStopAutoIncrease = true);
 	void SetAutoIncreaseFrequency(const float NewFrequency);
 	
 	// AutoDecrease functions
+	void StartAutoDecrease();
 	void StopAutoDecrease();
 	void SteAutoDecreaseEnabled(const bool bIsEnabled, const bool bStopAutoDecrease = true);
 	void SetAutoDecreaseFrequency(const float NewFrequency);
@@ -111,12 +113,10 @@ public:
 protected:
 	// AutoIncrease
 	FTimerHandle AutoIncreaseHandle;
-	void StartAutoIncrease();
 	void ProcessAutoIncrease();
 	
 	// AutoDecrease
 	FTimerHandle AutoDecreaseHandle;
-	void StartAutoDecrease();
 	void ProcessAutoDecrease();
 	
 	// Other
