@@ -4,6 +4,8 @@
 #include "Weapon/STUProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 ASTUProjectile::ASTUProjectile()
 {
@@ -11,6 +13,8 @@ ASTUProjectile::ASTUProjectile()
 
     CollisionComponent = CreateDefaultSubobject<USphereComponent>("CollisionComponent");
     CollisionComponent->InitSphereRadius(5.0f);
+    CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
     SetRootComponent(CollisionComponent);
 
     MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
@@ -23,7 +27,39 @@ void ASTUProjectile::BeginPlay()
     Super::BeginPlay();
 
     check(MovementComponent);
+    check(CollisionComponent);
     MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
-    SetLifeSpan(5.f);
+    CollisionComponent->IgnoreActorWhenMoving(GetOwner(), true);
+    CollisionComponent->OnComponentHit.AddDynamic(this, &ASTUProjectile::OnProjectileHit);
+    SetLifeSpan(DefaultLifeSpan);
 }
 
+void ASTUProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent,
+                                     AActor* OtherActor,
+                                     UPrimitiveComponent* OtherComp,
+                                     FVector NormalImpulse,
+                                     const FHitResult& Hit)
+{
+    UWorld* World = GetWorld();
+    
+    if (!World) return;
+
+    MovementComponent->StopMovementImmediately();
+    UGameplayStatics::ApplyRadialDamage(World,
+                                        DamageAmount,
+                                        GetActorLocation(),
+                                        DamageRadius,
+                                        UDamageType::StaticClass(),
+                                        {GetOwner()},
+                                        this,
+                                        GetController(),
+                                        bDoFullDamage);
+    DrawDebugSphere(World, GetActorLocation(), DamageRadius, 24, FColor::Red, false, 5.f);
+    Destroy();
+}
+
+AController* ASTUProjectile::GetController() const
+{
+    const APawn* Pawn = Cast<APawn>(GetOwner());
+    return Pawn ? Pawn->GetController() : nullptr;
+}
