@@ -27,23 +27,80 @@ void USTUWeaponComponent::StopFire()
     CurrentWeapon->StopFire();
 }
 
+void USTUWeaponComponent::EquipNextWeapon()
+{
+    CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
+
+    UE_LOG(LogTemp, Warning, TEXT("Weapon index: %d"), CurrentWeaponIndex);
+
+    EquipWeapon(CurrentWeaponIndex);
+}
+
+void USTUWeaponComponent::EquipPreviousWeapon()
+{
+    CurrentWeaponIndex = CurrentWeaponIndex == 0 ? Weapons.Num() - 1 : CurrentWeaponIndex - 1;
+
+    UE_LOG(LogTemp, Warning, TEXT("Weapon index: %d"), CurrentWeaponIndex);
+
+    EquipWeapon(CurrentWeaponIndex);
+}
+
 void USTUWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
 
     Owner = Cast<ACharacter>(GetOwner());
-    SpawnWeapon();
+    SpawnWeapons();
+    EquipWeapon(CurrentWeaponIndex);
 }
 
-void USTUWeaponComponent::SpawnWeapon()
+void USTUWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    CurrentWeapon = nullptr;
+    for (ASTUBaseWeapon* Weapon : Weapons)
+    {
+        Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+        Weapon->Destroy();
+    }
+
+    Weapons.Empty();
+    Super::EndPlay(EndPlayReason);
+}
+
+void USTUWeaponComponent::SpawnWeapons()
 {
     if (!GetWorld() || !Owner) return;
 
-    CurrentWeapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
+    for (auto WeaponClass : WeaponClasses)
+    {
+        ASTUBaseWeapon* Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
 
-    if (!CurrentWeapon) return;
-    
+        if (!Weapon) continue;
+
+        Weapon->SetOwner(Owner);
+        Weapons.Add(Weapon);
+        AttachWeaponToSocket(Weapon, Owner->GetMesh(), ArmoryWeaponSocketName);
+    }
+}
+
+void USTUWeaponComponent::AttachWeaponToSocket(ASTUBaseWeapon* Weapon,
+                                               USkeletalMeshComponent* Mesh,
+                                               const FName SocketName)
+{
     const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
-    CurrentWeapon->AttachToComponent(Owner->GetMesh(), AttachmentRules, WeaponSocketName);
-    CurrentWeapon->SetOwner(GetOwner());
+    Weapon->AttachToComponent(Mesh, AttachmentRules, SocketName);
+}
+
+void USTUWeaponComponent::EquipWeapon(const int32 WeaponIndex)
+{
+    if (!Owner || WeaponIndex >= Weapons.Num() || Weapons.Num() == 0) return;
+
+    if (CurrentWeapon)
+    {
+        CurrentWeapon->StopFire();
+        AttachWeaponToSocket(CurrentWeapon, Owner->GetMesh(), ArmoryWeaponSocketName);
+    }
+
+    CurrentWeapon = Weapons[WeaponIndex];
+    AttachWeaponToSocket(CurrentWeapon, Owner->GetMesh(), EquippedWeaponSocketName);
 }
