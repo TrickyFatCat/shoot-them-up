@@ -30,18 +30,12 @@ void USTUWeaponComponent::StopFire()
 void USTUWeaponComponent::EquipNextWeapon()
 {
     CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
-
-    UE_LOG(LogTemp, Warning, TEXT("Weapon index: %d"), CurrentWeaponIndex);
-
     EquipWeapon(CurrentWeaponIndex);
 }
 
 void USTUWeaponComponent::EquipPreviousWeapon()
 {
     CurrentWeaponIndex = CurrentWeaponIndex == 0 ? Weapons.Num() - 1 : CurrentWeaponIndex - 1;
-
-    UE_LOG(LogTemp, Warning, TEXT("Weapon index: %d"), CurrentWeaponIndex);
-
     EquipWeapon(CurrentWeaponIndex);
 }
 
