@@ -87,6 +87,8 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     // Weapon bindings
     PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::StartFire);
     PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USTUWeaponComponent::StopFire);
+    PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::EquipNextWeapon);
+    PlayerInputComponent->BindAction("PreviousWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::EquipPreviousWeapon);
 }
 
 void ASTUBaseCharacter::SetInputYawScale(const float NewYawScale) const
@@ -159,6 +161,7 @@ void ASTUBaseCharacter::OnDeath()
     }
 
     GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    WeaponComponent->StopFire();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
