@@ -8,6 +8,8 @@
 
 class ASTUBaseWeapon;
 class ACharacter;
+class UAnimMontage;
+class USkeletalMeshComponent;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
@@ -30,6 +32,8 @@ protected:
     FName EquippedWeaponSocketName = "WeaponSocket";
     UPROPERTY(EditDefaultsOnly, Category="Weapon")
     FName ArmoryWeaponSocketName = "ArmorySocket";
+    UPROPERTY(EditDefaultsOnly, Category="Animation")
+    UAnimMontage* EquipAnimMontage = nullptr;
 
 private:
     UPROPERTY()
@@ -39,7 +43,16 @@ private:
     UPROPERTY()
     TArray<ASTUBaseWeapon*> Weapons;
     int32 CurrentWeaponIndex = 0;
+    bool bEquipInProgress = false;
     void SpawnWeapons();
     void AttachWeaponToSocket(ASTUBaseWeapon* Weapon, USkeletalMeshComponent* Mesh, const FName SocketName);
     void EquipWeapon(const int32 WeaponIndex);
+
+    void PlayAnimMontage(UAnimMontage* Animation) const;
+    void InitAnimations();
+    void OnChangeWeapons(USkeletalMeshComponent* MeshComponent);
+    void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
+
+    bool CanFire() const { return CurrentWeapon && !bEquipInProgress; }
+    bool CanEquip() const { return !bEquipInProgress; }
 };
