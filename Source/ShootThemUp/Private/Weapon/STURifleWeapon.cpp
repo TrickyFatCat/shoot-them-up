@@ -35,11 +35,19 @@ void ASTURifleWeapon::MakeShot()
 {
     UWorld* World = GetWorld();
 
-    if (!World) return;
+    if (!World || IsClipEmpty())
+    {
+        StopFire();
+        return;
+    }
 
     FVector TraceStart, TraceEnd;
 
-    if (!GetTraceData(TraceStart, TraceEnd)) return;
+    if (!GetTraceData(TraceStart, TraceEnd))
+    {
+        StopFire();
+        return;
+    }
 
     FHitResult HitResult;
     MakeHit(HitResult, TraceStart, TraceEnd);
@@ -69,6 +77,8 @@ void ASTURifleWeapon::MakeShot()
                       3.f
         );
     }
+
+    DecreaseAmmo();
 }
 
 bool ASTURifleWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const

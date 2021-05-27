@@ -30,6 +30,7 @@ void ASTUBaseWeapon::StopFire()
 void ASTUBaseWeapon::BeginPlay()
 {
     Super::BeginPlay();
+    CurrentAmmo = DefaultAmmo;
 }
 
 void ASTUBaseWeapon::MakeShot()
@@ -87,6 +88,32 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
                                     TraceEnd,
                                     ECollisionChannel::ECC_Visibility,
                                     CollisionQueryParams);
+}
+
+void ASTUBaseWeapon::DecreaseAmmo()
+{
+    CurrentAmmo.ClipAmmo = FMath::Max(--CurrentAmmo.ClipAmmo, 0);
+
+    UE_LOG(LogTemp, Warning, TEXT("Ammo: %d/%d"), CurrentAmmo.ClipAmmo, CurrentAmmo.ClipSize);
+
+    if (IsClipEmpty() && !IsEmpty())
+    {
+        ReloadClip();
+    }
+}
+
+void ASTUBaseWeapon::IncreaseAmmo(const int32 DeltaAmmo)
+{
+}
+
+void ASTUBaseWeapon::ReloadClip()
+{
+    CurrentAmmo.ClipAmmo = CurrentAmmo.ClipSize;
+
+    if (!CurrentAmmo.bIsInfinite)
+    {
+        CurrentAmmo.ClipsNumber--;
+    }
 }
 
 
