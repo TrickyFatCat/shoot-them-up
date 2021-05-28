@@ -33,6 +33,7 @@ public:
     ASTUBaseWeapon();
     virtual void StartFire();
     virtual void StopFire();
+    bool IsEmpty() const { return CurrentAmmo.ClipsNumber <= 0 && !CurrentAmmo.bIsInfinite && IsClipEmpty(); }
 
 protected:
     virtual void BeginPlay() override;
@@ -60,7 +61,6 @@ protected:
     void DecreaseAmmo();
     void IncreaseAmmo(const int32 DeltaAmmo);
     bool IsClipEmpty() const { return CurrentAmmo.ClipAmmo <= 0; }
-    bool IsEmpty() const { return CurrentAmmo.ClipsNumber <= 0 && !CurrentAmmo.bIsInfinite && IsClipEmpty(); }
     void ReloadClip();
 private:
     FAmmoData CurrentAmmo;

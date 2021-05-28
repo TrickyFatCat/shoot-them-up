@@ -57,6 +57,7 @@ private:
     TArray<ASTUBaseWeapon*> Weapons;
     int32 CurrentWeaponIndex = 0;
     bool bEquipInProgress = false;
+    bool bReloadInProgress = false;
     void SpawnWeapons();
     void AttachWeaponToSocket(ASTUBaseWeapon* Weapon, USkeletalMeshComponent* Mesh, const FName SocketName);
     void EquipWeapon(const int32 WeaponIndex);
@@ -65,7 +66,28 @@ private:
     void InitAnimations();
     void OnChangeWeapons(USkeletalMeshComponent* MeshComponent);
     void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
+    void OnReloadFinished(USkeletalMeshComponent* MeshComponent);
 
-    bool CanFire() const { return CurrentWeapon && !bEquipInProgress; }
-    bool CanEquip() const { return !bEquipInProgress; }
+    bool CanFire() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress; }
+    bool CanEquip() const { return !bEquipInProgress && !bReloadInProgress; }
+    bool CanReload() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress; }
+    template<typename T>
+    T* FindFirstNotifyByClass(UAnimSequenceBase* Animation)
+    {
+        if (!Animation) return nullptr;
+
+        const auto NotifyEvents = Animation->Notifies;
+
+        for (auto NotifyEvent : NotifyEvents)
+        {
+            auto AnimNotify = Cast<T>(NotifyEvent.Notify);
+
+            if (AnimNotify)
+            {
+                return AnimNotify;
+            }
+        }
+        
+        return nullptr;
+    }
 };
