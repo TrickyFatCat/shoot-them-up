@@ -89,6 +89,7 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USTUWeaponComponent::StopFire);
     PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::EquipNextWeapon);
     PlayerInputComponent->BindAction("PreviousWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::EquipPreviousWeapon);
+    PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Reload);
 }
 
 void ASTUBaseCharacter::SetInputYawScale(const float NewYawScale) const
