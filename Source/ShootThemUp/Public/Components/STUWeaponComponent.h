@@ -11,6 +11,16 @@ class ACharacter;
 class UAnimMontage;
 class USkeletalMeshComponent;
 
+USTRUCT(BlueprintType)
+struct FWeaponData
+{
+    GENERATED_USTRUCT_BODY()
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+    TSubclassOf<ASTUBaseWeapon> WeaponClass;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+    UAnimMontage* ReloadAnimMontage;
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
 {
@@ -22,19 +32,22 @@ public:
     void StopFire();
     void EquipNextWeapon();
     void EquipPreviousWeapon();
+    void Reload();
 
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     UPROPERTY(EditDefaultsOnly, Category="Weapon")
-    TArray<TSubclassOf<ASTUBaseWeapon>> WeaponClasses;
+    TArray<FWeaponData> WeaponData;
     UPROPERTY(EditDefaultsOnly, Category="Weapon")
     FName EquippedWeaponSocketName = "WeaponSocket";
     UPROPERTY(EditDefaultsOnly, Category="Weapon")
     FName ArmoryWeaponSocketName = "ArmorySocket";
     UPROPERTY(EditDefaultsOnly, Category="Animation")
     UAnimMontage* EquipAnimMontage = nullptr;
-
+    UPROPERTY()
+    UAnimMontage* CurrentReloadAnimMontage = nullptr;
+    
 private:
     UPROPERTY()
     ACharacter* Owner = nullptr;

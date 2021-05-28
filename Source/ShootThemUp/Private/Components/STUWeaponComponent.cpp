@@ -48,6 +48,10 @@ void USTUWeaponComponent::EquipPreviousWeapon()
     PlayAnimMontage(EquipAnimMontage);
 }
 
+void USTUWeaponComponent::Reload()
+{
+}
+
 void USTUWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
@@ -75,9 +79,9 @@ void USTUWeaponComponent::SpawnWeapons()
 {
     if (!GetWorld() || !Owner) return;
 
-    for (auto WeaponClass : WeaponClasses)
+    for (auto Data : WeaponData)
     {
-        ASTUBaseWeapon* Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
+        ASTUBaseWeapon* Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(Data.WeaponClass);
 
         if (!Weapon) continue;
 
@@ -97,7 +101,7 @@ void USTUWeaponComponent::AttachWeaponToSocket(ASTUBaseWeapon* Weapon,
 
 void USTUWeaponComponent::EquipWeapon(const int32 WeaponIndex)
 {
-    if (!Owner || WeaponIndex >= Weapons.Num() || Weapons.Num() == 0) return;
+    if (!Owner || WeaponIndex >= Weapons.Num() || Weapons.Num() <= 0) return;
 
     if (CurrentWeapon)
     {
@@ -106,6 +110,11 @@ void USTUWeaponComponent::EquipWeapon(const int32 WeaponIndex)
     }
 
     CurrentWeapon = Weapons[WeaponIndex];
+    const auto CurrentWeaponData = WeaponData.FindByPredicate([&](const FWeaponData& Data)
+    {
+        return Data.WeaponClass == CurrentWeapon->GetClass();
+    });
+    CurrentReloadAnimMontage = CurrentWeaponData ? CurrentWeaponData->ReloadAnimMontage : nullptr;
     AttachWeaponToSocket(CurrentWeapon, Owner->GetMesh(), EquippedWeaponSocketName);
 }
 
@@ -144,7 +153,7 @@ void USTUWeaponComponent::OnChangeWeapons(USkeletalMeshComponent* MeshComponent)
     if (!Owner) return;
 
     if (Owner->GetMesh() != MeshComponent) return;
-    
+
     EquipWeapon(CurrentWeaponIndex);
 }
 
