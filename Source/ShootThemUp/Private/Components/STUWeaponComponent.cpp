@@ -7,6 +7,7 @@
 #include "Animations/STUEquipFinishedAnimNotify.h"
 #include "Animations/STUChangeWeaponAnimNotify.h"
 #include "Animations/STUReloadAnimNotify.h"
+#include "Animations/AnimUtils.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
 
@@ -133,7 +134,7 @@ void USTUWeaponComponent::PlayAnimMontage(UAnimMontage* Animation) const
 
 void USTUWeaponComponent::InitAnimations()
 {
-    auto WeaponChangeNotify = FindFirstNotifyByClass<USTUChangeWeaponAnimNotify>(EquipAnimMontage);
+    auto WeaponChangeNotify = AnimUtils::FindFirstNotifyByClass<USTUChangeWeaponAnimNotify>(EquipAnimMontage);
 
     if (WeaponChangeNotify)
     {
@@ -148,7 +149,7 @@ void USTUWeaponComponent::InitAnimations()
         checkNoEntry();
     }
 
-    auto EquipFinishedNotify = FindFirstNotifyByClass<USTUEquipFinishedAnimNotify>(EquipAnimMontage);
+    auto EquipFinishedNotify = AnimUtils::FindFirstNotifyByClass<USTUEquipFinishedAnimNotify>(EquipAnimMontage);
 
     if (EquipFinishedNotify)
     {
@@ -165,7 +166,7 @@ void USTUWeaponComponent::InitAnimations()
 
     for (auto Data : WeaponData)
     {
-        auto ReloadFinishNotify = FindFirstNotifyByClass<USTUReloadAnimNotify>(Data.ReloadAnimMontage);
+        auto ReloadFinishNotify = AnimUtils::FindFirstNotifyByClass<USTUReloadAnimNotify>(Data.ReloadAnimMontage);
         if (ReloadFinishNotify)
         {
             ReloadFinishNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
