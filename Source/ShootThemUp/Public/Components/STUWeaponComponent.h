@@ -5,23 +5,13 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Weapon/STUBaseWeapon.h"
-
+#include "Weapon/STUCoreTypes.h"
 #include "STUWeaponComponent.generated.h"
 
 class ASTUBaseWeapon;
 class ACharacter;
 class UAnimMontage;
 class USkeletalMeshComponent;
-
-USTRUCT(BlueprintType)
-struct FWeaponData
-{
-    GENERATED_USTRUCT_BODY()
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-    TSubclassOf<ASTUBaseWeapon> WeaponClass;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-    UAnimMontage* ReloadAnimMontage;
-};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent

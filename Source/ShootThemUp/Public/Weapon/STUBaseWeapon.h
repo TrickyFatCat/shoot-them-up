@@ -4,27 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Weapon/STUCoreTypes.h"
 #include "STUBaseWeapon.generated.h"
 
 class USkeletalMeshComponent;
 class APlayerController;
 
-USTRUCT(BlueprintType)
-struct FAmmoData
-{
-    GENERATED_USTRUCT_BODY()
-
-    UPROPERTY()
-    int32 ClipAmmo = 20;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon", meta=(ClampMin="0"))
-    int32 ClipSize = 20;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon", meta=(EditCondition="!bIsInfinite", ClampMin="0"))
-    int32 ClipsNumber = 5;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-    bool bIsInfinite = false;
-};
-
-DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature)
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
