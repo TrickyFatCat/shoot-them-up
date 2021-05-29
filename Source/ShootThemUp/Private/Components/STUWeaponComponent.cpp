@@ -20,6 +20,7 @@ void USTUWeaponComponent::StartFire()
 {
     if (!CanFire()) return;
 
+    if (!CurrentWeapon->EnoughAmmo()) return;
     CurrentWeapon->StartFire();
 }
 
@@ -52,14 +53,7 @@ void USTUWeaponComponent::EquipPreviousWeapon()
 void USTUWeaponComponent::Reload()
 {
     if (!CanReload()) return;
-
-    if (CurrentWeapon)
-    {
-        CurrentWeapon->StopFire();
-    }
-    
-    bReloadInProgress = true;
-    PlayAnimMontage(CurrentReloadAnimMontage);
+    ReloadClip();
 }
 
 void USTUWeaponComponent::BeginPlay()
@@ -95,6 +89,7 @@ void USTUWeaponComponent::SpawnWeapons()
 
         if (!Weapon) continue;
 
+        Weapon->OnClipEmpty.AddUObject(this, &USTUWeaponComponent::OnEmptyClip);
         Weapon->SetOwner(Owner);
         Weapons.Add(Weapon);
         AttachWeaponToSocket(Weapon, Owner->GetMesh(), ArmoryWeaponSocketName);
@@ -182,9 +177,23 @@ void USTUWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
 
 void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent)
 {
-    if (!Owner) return;
+    if (!Owner || !CurrentWeapon) return;
 
     if (Owner->GetMesh() != MeshComponent) return;
 
+    CurrentWeapon->ReloadClip();
     bReloadInProgress = false;
+}
+
+void USTUWeaponComponent::OnEmptyClip()
+{
+    ReloadClip();
+}
+
+void USTUWeaponComponent::ReloadClip()
+{
+    if (!CanReload()) return;
+
+    bReloadInProgress = true;
+    PlayAnimMontage(CurrentReloadAnimMontage);
 }

@@ -24,6 +24,8 @@ struct FAmmoData
     bool bIsInfinite = false;
 };
 
+DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature)
+
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 {
@@ -33,7 +35,10 @@ public:
     ASTUBaseWeapon();
     virtual void StartFire();
     virtual void StopFire();
-    bool IsEmpty() const { return CurrentAmmo.ClipsNumber <= 0 && !CurrentAmmo.bIsInfinite && IsClipEmpty(); }
+    void ReloadClip();
+    bool CanReload() const { return CurrentAmmo.ClipAmmo < CurrentAmmo.ClipSize && CurrentAmmo.ClipsNumber > 0; }
+    bool EnoughAmmo() const { return CurrentAmmo.ClipAmmo > 0 && CurrentAmmo.ClipsNumber > 0; }
+    FOnClipEmptySignature OnClipEmpty;
 
 protected:
     virtual void BeginPlay() override;
@@ -61,7 +66,7 @@ protected:
     void DecreaseAmmo();
     void IncreaseAmmo(const int32 DeltaAmmo);
     bool IsClipEmpty() const { return CurrentAmmo.ClipAmmo <= 0; }
-    void ReloadClip();
+    bool IsEmpty() const { return CurrentAmmo.ClipsNumber <= 0 && !CurrentAmmo.bIsInfinite && IsClipEmpty(); }
 private:
     FAmmoData CurrentAmmo;
 };

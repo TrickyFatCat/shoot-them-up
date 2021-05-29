@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Weapon/STUBaseWeapon.h"
+
 #include "STUWeaponComponent.generated.h"
 
 class ASTUBaseWeapon;
@@ -70,7 +72,11 @@ private:
 
     bool CanFire() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress; }
     bool CanEquip() const { return !bEquipInProgress && !bReloadInProgress; }
-    bool CanReload() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress; }
+    bool CanReload() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress && CurrentWeapon->CanReload(); }
+
+    void OnEmptyClip();
+    void ReloadClip();
+    
     template<typename T>
     T* FindFirstNotifyByClass(UAnimSequenceBase* Animation)
     {

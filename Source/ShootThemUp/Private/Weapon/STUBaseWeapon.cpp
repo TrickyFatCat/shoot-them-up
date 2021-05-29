@@ -92,13 +92,14 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
 
 void ASTUBaseWeapon::DecreaseAmmo()
 {
+    if (CurrentAmmo.ClipsNumber == 0) return;
+    
     CurrentAmmo.ClipAmmo = FMath::Max(--CurrentAmmo.ClipAmmo, 0);
-
     UE_LOG(LogTemp, Warning, TEXT("Ammo: %d/%d"), CurrentAmmo.ClipAmmo, CurrentAmmo.ClipSize);
 
     if (IsClipEmpty() && !IsEmpty())
     {
-        ReloadClip();
+        OnClipEmpty.Broadcast();
     }
 }
 
@@ -108,12 +109,16 @@ void ASTUBaseWeapon::IncreaseAmmo(const int32 DeltaAmmo)
 
 void ASTUBaseWeapon::ReloadClip()
 {
-    CurrentAmmo.ClipAmmo = CurrentAmmo.ClipSize;
-
+    StopFire();
+    
     if (!CurrentAmmo.bIsInfinite)
     {
+        if (CurrentAmmo.ClipsNumber == 0) return;
+        
         CurrentAmmo.ClipsNumber--;
     }
+    
+    CurrentAmmo.ClipAmmo = CurrentAmmo.ClipSize;
 }
 
 
