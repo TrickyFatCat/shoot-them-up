@@ -2,6 +2,7 @@
 
 class AnimUtils
 {
+public:
     template <typename T>
     static T* FindFirstNotifyByClass(UAnimSequenceBase* Animation)
     {
