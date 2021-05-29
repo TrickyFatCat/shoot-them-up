@@ -30,6 +30,7 @@ void ASTUBaseWeapon::StopFire()
 void ASTUBaseWeapon::BeginPlay()
 {
     Super::BeginPlay();
+    checkf(DefaultAmmo.ClipAmmo <= 0, TEXT("Clip size can't be less or equal to 0"));
     CurrentAmmo = DefaultAmmo;
 }
 

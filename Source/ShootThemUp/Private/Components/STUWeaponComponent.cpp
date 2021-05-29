@@ -61,6 +61,7 @@ void USTUWeaponComponent::BeginPlay()
     Super::BeginPlay();
 
     Owner = Cast<ACharacter>(GetOwner());
+    checkf(EquipAnimMontage, TEXT("Equipping anim montage isn't set in weapon component of %s"), *Owner->GetName())
     InitAnimations();
     SpawnWeapons();
     EquipWeapon(CurrentWeaponIndex);
@@ -138,6 +139,14 @@ void USTUWeaponComponent::InitAnimations()
     {
         WeaponChangeNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnChangeWeapons);
     }
+    else
+    {
+        UE_LOG(LogWeaponComponent,
+               Error,
+               TEXT("Change weapon anim notify not found in %s"),
+               *EquipAnimMontage->GetName());
+        checkNoEntry();
+    }
 
     auto EquipFinishedNotify = FindFirstNotifyByClass<USTUEquipFinishedAnimNotify>(EquipAnimMontage);
 
@@ -145,14 +154,29 @@ void USTUWeaponComponent::InitAnimations()
     {
         EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
     }
+    else
+    {
+        UE_LOG(LogWeaponComponent,
+               Error,
+               TEXT("Equip finished anim notify not found in %s"),
+               *EquipAnimMontage->GetName());
+        checkNoEntry();
+    }
 
     for (auto Data : WeaponData)
     {
         auto ReloadFinishNotify = FindFirstNotifyByClass<USTUReloadAnimNotify>(Data.ReloadAnimMontage);
-        if (!ReloadFinishNotify) continue;
         if (ReloadFinishNotify)
         {
             ReloadFinishNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
+        }
+        else
+        {
+            UE_LOG(LogWeaponComponent,
+                   Error,
+                   TEXT("Reload anim notify not found in %s"),
+                   *Data.ReloadAnimMontage->GetName());
+            checkNoEntry();
         }
     }
 }
