@@ -28,6 +28,8 @@ public:
     float GetHealth() const { return HealthObject->GetValue(); }
     UFUNCTION(BlueprintPure)
     float GetMaxHealth() const { return HealthObject->GetValueMax(); }
+    UFUNCTION(BlueprintPure, Category="Health")
+    float GetNormalizedHealth() const { return HealthObject->GetNormalizedValue(); }
     UFUNCTION(BlueprintCallable, Category="Health")
     void DecreaseHealth(const float DeltaHealth);
     UFUNCTION(BlueprintPure)
@@ -48,6 +50,8 @@ public:
     float GetShield() const { return ShieldObject->GetValue(); }
     UFUNCTION(BlueprintPure)
     float GetMaxShield() const { return ShieldObject->GetValueMax(); }
+    UFUNCTION(BlueprintPure, Category="Shield")
+    float GetNormalizedShield() const { return ShieldObject->GetNormalizedValue(); }
     UFUNCTION(BlueprintCallable, Category="Shield")
     void DecreaseShield(const float DeltaShield);
     FOnShieldChanged OnShieldChanged;
