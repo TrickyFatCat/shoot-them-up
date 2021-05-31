@@ -21,8 +21,8 @@ public:
     virtual void StartFire();
     virtual void StopFire();
     void ReloadClip();
-    bool CanReload() const { return CurrentAmmo.ClipAmmo < CurrentAmmo.ClipSize && CurrentAmmo.ClipsNumber > 0; }
-    bool EnoughAmmo() const { return CurrentAmmo.ClipAmmo > 0 && CurrentAmmo.ClipsNumber > 0; }
+    bool CanReload() const { return WeaponAmmo.ClipAmmo < WeaponAmmo.ClipAmmoMax && WeaponAmmo.InventoryAmmo > 0; }
+    bool EnoughAmmo() const { return WeaponAmmo.ClipAmmo > 0 && WeaponAmmo.InventoryAmmo > 0; }
     FOnClipEmptySignature OnClipEmpty;
 
 protected:
@@ -32,14 +32,14 @@ protected:
     USkeletalMeshComponent* WeaponMesh = nullptr;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     FName MuzzleSocketName = "MuzzleSocket";
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
     float MaxTraceDistance = 5000.f;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     float DamageAmount = 10.f;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     float BulletSpread = 6.f;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-    FAmmoData DefaultAmmo{20, 20, 5, false};
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+    FAmmoData WeaponAmmo{20, 20, 100, 100, false};
 
     virtual void MakeShot();
     APlayerController* GetPlayerController() const;
@@ -49,9 +49,6 @@ protected:
     void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
 
     void DecreaseAmmo();
-    void IncreaseAmmo(const int32 DeltaAmmo);
-    bool IsClipEmpty() const { return CurrentAmmo.ClipAmmo <= 0; }
-    bool IsEmpty() const { return CurrentAmmo.ClipsNumber <= 0 && !CurrentAmmo.bIsInfinite && IsClipEmpty(); }
-private:
-    FAmmoData CurrentAmmo;
+    bool IsClipEmpty() const { return WeaponAmmo.ClipAmmo <= 0; }
+    bool IsEmpty() const { return WeaponAmmo.InventoryAmmo <= 0 && !WeaponAmmo.bIsInfinite && IsClipEmpty(); }
 };

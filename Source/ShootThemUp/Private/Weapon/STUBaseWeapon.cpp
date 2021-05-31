@@ -5,9 +5,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
-#include "Viewports.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/Controller.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
 
@@ -30,13 +28,12 @@ void ASTUBaseWeapon::StopFire()
 void ASTUBaseWeapon::BeginPlay()
 {
     Super::BeginPlay();
-    checkf(DefaultAmmo.ClipAmmo <= 0, TEXT("Clip size can't be less or equal to 0"));
-    CurrentAmmo = DefaultAmmo;
+    WeaponAmmo.ClipAmmo = WeaponAmmo.ClipAmmoMax;
+    WeaponAmmo.InventoryAmmo = WeaponAmmo.InventoryAmmoMax;
 }
 
 void ASTUBaseWeapon::MakeShot()
 {
-
 }
 
 APlayerController* ASTUBaseWeapon::GetPlayerController() const
@@ -67,7 +64,7 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 {
     FVector ViewLocation;
     FRotator ViewRotation;
-    
+
     if (!GetPlayerViewPoint(ViewLocation, ViewRotation)) return false;
 
     TraceStart = ViewLocation;
@@ -81,7 +78,7 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
     const UWorld* World = GetWorld();
 
     if (!World) return;
-    
+
     FCollisionQueryParams CollisionQueryParams;
     CollisionQueryParams.AddIgnoredActor(GetOwner());
     World->LineTraceSingleByChannel(HitResult,
@@ -93,10 +90,10 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
 
 void ASTUBaseWeapon::DecreaseAmmo()
 {
-    if (CurrentAmmo.ClipsNumber == 0) return;
-    
-    CurrentAmmo.ClipAmmo = FMath::Max(--CurrentAmmo.ClipAmmo, 0);
-    UE_LOG(LogTemp, Warning, TEXT("Ammo: %d/%d"), CurrentAmmo.ClipAmmo, CurrentAmmo.ClipSize);
+    if (WeaponAmmo.InventoryAmmo == 0) return;
+
+    WeaponAmmo.ClipAmmo = FMath::Max(--WeaponAmmo.ClipAmmo, 0);
+    UE_LOG(LogBaseWeapon, Warning, TEXT("Ammo: %d/%d"), WeaponAmmo.ClipAmmo, WeaponAmmo.ClipAmmoMax);
 
     if (IsClipEmpty() && !IsEmpty())
     {
@@ -104,22 +101,22 @@ void ASTUBaseWeapon::DecreaseAmmo()
     }
 }
 
-void ASTUBaseWeapon::IncreaseAmmo(const int32 DeltaAmmo)
-{
-}
-
 void ASTUBaseWeapon::ReloadClip()
 {
     StopFire();
-    
-    if (!CurrentAmmo.bIsInfinite)
+
+    if (!WeaponAmmo.bIsInfinite)
     {
-        if (CurrentAmmo.ClipsNumber == 0) return;
-        
-        CurrentAmmo.ClipsNumber--;
+        if (WeaponAmmo.InventoryAmmo == 0) return;
+
+        const int32 DeltaAmmo = WeaponAmmo.ClipAmmoMax - WeaponAmmo.ClipAmmo;
+        const int32 RestoredAmmo =  WeaponAmmo.InventoryAmmo < DeltaAmmo ? WeaponAmmo.InventoryAmmo : DeltaAmmo;
+        WeaponAmmo.InventoryAmmo = FMath::Max(WeaponAmmo.InventoryAmmo - DeltaAmmo, 0);
+        WeaponAmmo.ClipAmmo = FMath::Max(WeaponAmmo.ClipAmmo + RestoredAmmo, WeaponAmmo.ClipAmmoMax);
+        UE_LOG(LogBaseWeapon, Warning, TEXT("Ammo Inventory: %d/%d"), WeaponAmmo.InventoryAmmo, WeaponAmmo.InventoryAmmoMax);
     }
-    
-    CurrentAmmo.ClipAmmo = CurrentAmmo.ClipSize;
+    else
+    {
+        WeaponAmmo.ClipAmmo = WeaponAmmo.ClipAmmoMax;
+    }
 }
-
-
