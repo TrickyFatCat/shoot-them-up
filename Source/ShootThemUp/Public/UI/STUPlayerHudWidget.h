@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Weapon/STUCoreTypes.h"
 #include "STUPlayerHudWidget.generated.h"
 
 class USTUHealthComponent;
@@ -21,6 +22,8 @@ public:
     float GetNormalizedHealth() const;
     UFUNCTION(BlueprintPure, Category="UI")
     float GetNormalizedShield() const;
+    UFUNCTION(BlueprintPure, Category="UI")
+    bool GetWeaponUIData(FWeaponUIData& UIData) const;
 
 protected:
     USTUHealthComponent* GetHealthComponent() const;

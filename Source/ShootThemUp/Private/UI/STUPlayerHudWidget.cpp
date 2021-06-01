@@ -3,6 +3,7 @@
 
 #include "UI/STUPlayerHudWidget.h"
 #include "Components/STUHealthComponent.h"
+#include "Components/STUWeaponComponent.h"
 
 float USTUPlayerHudWidget::GetNormalizedHealth() const
 {
@@ -20,6 +21,19 @@ float USTUPlayerHudWidget::GetNormalizedShield() const
     if (!HealthComponent) return 0.f;
 
     return HealthComponent->GetNormalizedShield();
+}
+
+bool USTUPlayerHudWidget::GetWeaponUIData(FWeaponUIData& UIData) const
+{
+    const APawn* PlayerPawn = GetOwningPlayerPawn();
+
+    if (!PlayerPawn) return false;
+
+    const USTUWeaponComponent* WeaponComponent = Cast<USTUWeaponComponent>(PlayerPawn->GetComponentByClass(USTUWeaponComponent::StaticClass()));
+
+    if (!WeaponComponent) return false;
+
+    return WeaponComponent->GetWeaponUIData(UIData);
 }
 
 USTUHealthComponent* USTUPlayerHudWidget::GetHealthComponent() const
