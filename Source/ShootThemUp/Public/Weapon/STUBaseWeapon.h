@@ -23,6 +23,7 @@ public:
     void ReloadClip();
     bool CanReload() const { return WeaponAmmo.ClipAmmo < WeaponAmmo.ClipAmmoMax && WeaponAmmo.InventoryAmmo > 0; }
     bool EnoughAmmo() const { return WeaponAmmo.ClipAmmo > 0 && WeaponAmmo.InventoryAmmo > 0; }
+    FWeaponUIData GetUIData() const { return WeaponUIData; }
     FOnClipEmptySignature OnClipEmpty;
 
 protected:
@@ -40,6 +41,8 @@ protected:
     float BulletSpread = 6.f;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     FAmmoData WeaponAmmo{20, 20, 100, 100, false};
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+    FWeaponUIData WeaponUIData;
 
     virtual void MakeShot();
     APlayerController* GetPlayerController() const;
