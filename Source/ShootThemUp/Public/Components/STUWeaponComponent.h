@@ -26,6 +26,7 @@ public:
     void EquipPreviousWeapon();
     void Reload();
     bool GetWeaponUIData(FWeaponUIData& WeaponUIData) const;
+    bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
 
 protected:
     virtual void BeginPlay() override;
