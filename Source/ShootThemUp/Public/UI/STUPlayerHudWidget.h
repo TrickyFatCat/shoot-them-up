@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/STUWeaponComponent.h"
 #include "Weapon/STUCoreTypes.h"
 #include "STUPlayerHudWidget.generated.h"
 
@@ -24,7 +25,17 @@ public:
     float GetNormalizedShield() const;
     UFUNCTION(BlueprintPure, Category="UI")
     bool GetWeaponUIData(FWeaponUIData& UIData) const;
+    UFUNCTION(BlueprintPure, Category="UI")
+    bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
 
 protected:
-    USTUHealthComponent* GetHealthComponent() const;
+    template<typename  T>
+    T* GetComponentByClass() const
+    {
+        const APawn* PlayerPawn = GetOwningPlayerPawn();
+
+        if (!PlayerPawn) return nullptr;
+
+        return Cast<T>(PlayerPawn->GetComponentByClass(T::StaticClass()));
+    }
 };

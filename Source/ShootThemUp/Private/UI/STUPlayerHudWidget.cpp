@@ -7,7 +7,7 @@
 
 float USTUPlayerHudWidget::GetNormalizedHealth() const
 {
-    const USTUHealthComponent* HealthComponent = GetHealthComponent();
+    const USTUHealthComponent* HealthComponent = GetComponentByClass<USTUHealthComponent>();
 
     if (!HealthComponent) return 0.f;
 
@@ -16,7 +16,7 @@ float USTUPlayerHudWidget::GetNormalizedHealth() const
 
 float USTUPlayerHudWidget::GetNormalizedShield() const
 {
-    const USTUHealthComponent* HealthComponent = GetHealthComponent();
+    const USTUHealthComponent* HealthComponent = GetComponentByClass<USTUHealthComponent>();
 
     if (!HealthComponent) return 0.f;
 
@@ -25,22 +25,18 @@ float USTUPlayerHudWidget::GetNormalizedShield() const
 
 bool USTUPlayerHudWidget::GetWeaponUIData(FWeaponUIData& UIData) const
 {
-    const APawn* PlayerPawn = GetOwningPlayerPawn();
-
-    if (!PlayerPawn) return false;
-
-    const USTUWeaponComponent* WeaponComponent = Cast<USTUWeaponComponent>(PlayerPawn->GetComponentByClass(USTUWeaponComponent::StaticClass()));
+    const USTUWeaponComponent* WeaponComponent = GetComponentByClass<USTUWeaponComponent>();
 
     if (!WeaponComponent) return false;
 
     return WeaponComponent->GetWeaponUIData(UIData);
 }
 
-USTUHealthComponent* USTUPlayerHudWidget::GetHealthComponent() const
+bool USTUPlayerHudWidget::GetWeaponAmmoData(FAmmoData& AmmoData) const
 {
-    const APawn* PlayerPawn = GetOwningPlayerPawn();
+    const USTUWeaponComponent* WeaponComponent = GetComponentByClass<USTUWeaponComponent>();
 
-    if (!PlayerPawn) return nullptr;
+    if (!WeaponComponent) return false;
 
-    return Cast<USTUHealthComponent>(PlayerPawn->GetComponentByClass(USTUHealthComponent::StaticClass()));
+    return WeaponComponent->GetWeaponAmmoData(AmmoData);
 }
