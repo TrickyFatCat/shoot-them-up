@@ -11,11 +11,11 @@ struct FAmmoData
 {
     GENERATED_USTRUCT_BODY()
 
-    UPROPERTY()
+    UPROPERTY(BlueprintReadOnly)
     int32 ClipAmmo = 20;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon", meta=(ClampMin="0"))
     int32 ClipAmmoMax = 20;
-    UPROPERTY()
+    UPROPERTY(BlueprintReadOnly)
     int32 InventoryAmmo = 100;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon", meta=(EditCondition="!bIsInfinite", ClampMin="0"))
     int32 InventoryAmmoMax = 100;
