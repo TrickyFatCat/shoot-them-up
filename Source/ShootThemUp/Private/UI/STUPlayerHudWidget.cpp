@@ -4,10 +4,11 @@
 #include "UI/STUPlayerHudWidget.h"
 #include "Components/STUHealthComponent.h"
 #include "Components/STUWeaponComponent.h"
+#include "STUUtils.h"
 
 float USTUPlayerHudWidget::GetNormalizedHealth() const
 {
-    const USTUHealthComponent* HealthComponent = GetComponentByClass<USTUHealthComponent>();
+    const USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
 
     if (!HealthComponent) return 0.f;
 
@@ -16,7 +17,7 @@ float USTUPlayerHudWidget::GetNormalizedHealth() const
 
 float USTUPlayerHudWidget::GetNormalizedShield() const
 {
-    const USTUHealthComponent* HealthComponent = GetComponentByClass<USTUHealthComponent>();
+    const USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
 
     if (!HealthComponent) return 0.f;
 
@@ -25,7 +26,7 @@ float USTUPlayerHudWidget::GetNormalizedShield() const
 
 bool USTUPlayerHudWidget::GetWeaponUIData(FWeaponUIData& UIData) const
 {
-    const USTUWeaponComponent* WeaponComponent = GetComponentByClass<USTUWeaponComponent>();
+    const USTUWeaponComponent* WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
 
     if (!WeaponComponent) return false;
 
@@ -34,7 +35,7 @@ bool USTUPlayerHudWidget::GetWeaponUIData(FWeaponUIData& UIData) const
 
 bool USTUPlayerHudWidget::GetWeaponAmmoData(FAmmoData& AmmoData) const
 {
-    const USTUWeaponComponent* WeaponComponent = GetComponentByClass<USTUWeaponComponent>();
+    const USTUWeaponComponent* WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
 
     if (!WeaponComponent) return false;
 
@@ -43,7 +44,7 @@ bool USTUPlayerHudWidget::GetWeaponAmmoData(FAmmoData& AmmoData) const
 
 bool USTUPlayerHudWidget::IsPlayerAlive() const
 {
-    const USTUHealthComponent* HealthComponent = GetComponentByClass<USTUHealthComponent>();
+    const USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
     return HealthComponent && !HealthComponent->GetIsDead();
 }
 

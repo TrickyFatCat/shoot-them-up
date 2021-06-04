@@ -31,14 +31,4 @@ public:
     bool IsPlayerAlive() const;
     UFUNCTION(BlueprintPure, Category="UI")
     bool IsPlayerSpectating() const;
-protected:
-    template<typename  T>
-    T* GetComponentByClass() const
-    {
-        const APawn* PlayerPawn = GetOwningPlayerPawn();
-
-        if (!PlayerPawn) return nullptr;
-
-        return Cast<T>(PlayerPawn->GetComponentByClass(T::StaticClass()));
-    }
 };
