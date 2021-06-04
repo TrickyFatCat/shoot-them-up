@@ -27,7 +27,10 @@ public:
     bool GetWeaponUIData(FWeaponUIData& UIData) const;
     UFUNCTION(BlueprintPure, Category="UI")
     bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
-
+    UFUNCTION(BlueprintPure, Category="UI")
+    bool IsPlayerAlive() const;
+    UFUNCTION(BlueprintPure, Category="UI")
+    bool IsPlayerSpectating() const;
 protected:
     template<typename  T>
     T* GetComponentByClass() const
