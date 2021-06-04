@@ -93,7 +93,6 @@ void ASTUBaseWeapon::DecreaseAmmo()
     if (WeaponAmmo.InventoryAmmo == 0) return;
 
     WeaponAmmo.ClipAmmo = FMath::Max(--WeaponAmmo.ClipAmmo, 0);
-    UE_LOG(LogBaseWeapon, Warning, TEXT("Ammo: %d/%d"), WeaponAmmo.ClipAmmo, WeaponAmmo.ClipAmmoMax);
 
     if (IsClipEmpty() && !IsEmpty())
     {
@@ -113,7 +112,6 @@ void ASTUBaseWeapon::ReloadClip()
         const int32 RestoredAmmo =  WeaponAmmo.InventoryAmmo < DeltaAmmo ? WeaponAmmo.InventoryAmmo : DeltaAmmo;
         WeaponAmmo.InventoryAmmo = FMath::Max(WeaponAmmo.InventoryAmmo - DeltaAmmo, 0);
         WeaponAmmo.ClipAmmo = FMath::Max(WeaponAmmo.ClipAmmo + RestoredAmmo, WeaponAmmo.ClipAmmoMax);
-        UE_LOG(LogBaseWeapon, Warning, TEXT("Ammo Inventory: %d/%d"), WeaponAmmo.InventoryAmmo, WeaponAmmo.InventoryAmmoMax);
     }
     else
     {
