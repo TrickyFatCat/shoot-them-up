@@ -2,6 +2,8 @@
 
 
 #include "Pickups/STUBasePickup.h"
+
+#include "Animation/AnimInstanceProxy.h"
 #include "Components/SphereComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBasePickup, All, All);
@@ -21,11 +23,14 @@ void ASTUBasePickup::BeginPlay()
 {
     Super::BeginPlay();
     check(CollisionComponent);
+    GenerateRotationYaw();
 }
 
 void ASTUBasePickup::Tick(float DeltaTime)
-{
+{ 
     Super::Tick(DeltaTime);
+
+    AddActorWorldRotation(FRotator(0.f, RotationYaw, 0.f));
 }
 
 void ASTUBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -55,11 +60,18 @@ void ASTUBasePickup::Hide()
     GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnTime);
 }
 
-void ASTUBasePickup::Respawn() const
+void ASTUBasePickup::Respawn()
 {
     CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
     if (!GetRootComponent()) return;
 
     GetRootComponent()->SetVisibility(true, true);
+    GenerateRotationYaw();
+}
+
+void ASTUBasePickup::GenerateRotationYaw()
+{
+    const float Direction = FMath::RandBool() ? 1.f : -1.f;
+    RotationYaw *= Direction;
 }

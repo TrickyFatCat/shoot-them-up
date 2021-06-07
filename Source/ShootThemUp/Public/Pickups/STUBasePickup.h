@@ -33,6 +33,8 @@ protected:
     virtual bool ActivateEffect(APawn* PlayerPawn);
 
 private:
+    float RotationYaw = 1.f;
     void Hide();
-    void Respawn() const;
+    void Respawn();
+    void GenerateRotationYaw();
 };
