@@ -19,3 +19,8 @@ void ASTUHealthPickup::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
+bool ASTUHealthPickup::ActivateEffect(APawn* PlayerPawn)
+{
+    return true;
+}
+

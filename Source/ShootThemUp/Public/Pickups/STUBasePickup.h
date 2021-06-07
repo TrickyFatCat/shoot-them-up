@@ -22,10 +22,17 @@ protected:
 
 public:
     virtual void Tick(float DeltaTime) override;
-
+    
 protected:
     UPROPERTY(VisibleAnywhere, Category="Components")
     USphereComponent* CollisionComponent = nullptr;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Pickup")
+    float RespawnTime = 5.f;
 
     virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+    virtual bool ActivateEffect(APawn* PlayerPawn);
+
+private:
+    void Hide();
+    void Respawn() const;
 };

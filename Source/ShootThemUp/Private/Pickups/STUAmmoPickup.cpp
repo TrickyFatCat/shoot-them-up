@@ -20,3 +20,8 @@ void ASTUAmmoPickup::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
+bool ASTUAmmoPickup::ActivateEffect(APawn* PlayerPawn)
+{
+    return true;
+}
+

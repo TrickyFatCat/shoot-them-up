@@ -20,7 +20,7 @@ ASTUBasePickup::ASTUBasePickup()
 void ASTUBasePickup::BeginPlay()
 {
     Super::BeginPlay();
-    
+    check(CollisionComponent);
 }
 
 void ASTUBasePickup::Tick(float DeltaTime)
@@ -31,6 +31,35 @@ void ASTUBasePickup::Tick(float DeltaTime)
 void ASTUBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
 {
     Super::NotifyActorBeginOverlap(OtherActor);
-    Destroy();
+    APawn* Pawn = Cast<APawn>(OtherActor);
+
+    if (ActivateEffect(Pawn))
+    {
+        Hide();
+    }
 }
 
+bool ASTUBasePickup::ActivateEffect(APawn* PlayerPawn)
+{
+    return false;
+}
+
+void ASTUBasePickup::Hide()
+{
+    CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+
+    if (!GetRootComponent()) return;
+
+    GetRootComponent()->SetVisibility(false, true);
+    FTimerHandle RespawnTimerHandle;
+    GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnTime);
+}
+
+void ASTUBasePickup::Respawn() const
+{
+    CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+
+    if (!GetRootComponent()) return;
+
+    GetRootComponent()->SetVisibility(true, true);
+}
