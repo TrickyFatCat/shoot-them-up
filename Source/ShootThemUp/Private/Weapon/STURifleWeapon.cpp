@@ -37,7 +37,7 @@ void ASTURifleWeapon::MakeShot()
 
     if (!World) return;
     
-    if (IsClipEmpty() || !EnoughAmmo())
+    if (IsClipEmpty())
     {
         StopFire();
         return;

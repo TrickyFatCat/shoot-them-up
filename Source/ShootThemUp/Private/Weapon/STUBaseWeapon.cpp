@@ -90,8 +90,8 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
 
 void ASTUBaseWeapon::DecreaseAmmo()
 {
-    if (WeaponAmmo.InventoryAmmo == 0) return;
-
+    if (IsEmpty()) return;
+    
     WeaponAmmo.ClipAmmo = FMath::Max(--WeaponAmmo.ClipAmmo, 0);
 
     if (IsClipEmpty() && !IsEmpty())

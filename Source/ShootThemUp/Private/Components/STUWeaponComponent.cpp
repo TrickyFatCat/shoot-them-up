@@ -22,7 +22,8 @@ void USTUWeaponComponent::StartFire()
 {
     if (!CanFire()) return;
 
-    if (!CurrentWeapon->EnoughAmmo()) return;
+    if (CurrentWeapon->IsEmpty()) return;
+    
     CurrentWeapon->StartFire();
 }
 
@@ -55,6 +56,7 @@ void USTUWeaponComponent::EquipPreviousWeapon()
 void USTUWeaponComponent::Reload()
 {
     if (!CanReload()) return;
+    CurrentWeapon->StopFire();
     ReloadClip();
 }
 
