@@ -32,6 +32,8 @@ public:
     float GetNormalizedHealth() const { return HealthObject->GetNormalizedValue(); }
     UFUNCTION(BlueprintCallable, Category="Health")
     void DecreaseHealth(const float DeltaHealth);
+    UFUNCTION(BlueprintCallable, Category="Health")
+    bool IncreaseHealth(const float DeltaHealth, const bool bClampToMax);
     UFUNCTION(BlueprintPure)
     bool GetIsDead() const { return GetHealth() <= 0.f; }
     FOnDeath OnDeath;

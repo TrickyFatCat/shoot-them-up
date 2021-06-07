@@ -48,6 +48,14 @@ void USTUHealthComponent::DecreaseHealth(const float DeltaHealth)
     }
 }
 
+bool USTUHealthComponent::IncreaseHealth(const float DeltaHealth, const bool bClampToMax)
+{
+    if (DeltaHealth <= 0.f || GetHealth() <= 0.f) return false;
+
+    HealthObject->IncreaseValue(DeltaHealth, bClampToMax);
+    return true;
+}
+
 // ReSharper disable once CppMemberFunctionMayBeConst
 void USTUHealthComponent::BroadcastOnHealthChanged(const float CurrentHealth)
 {
