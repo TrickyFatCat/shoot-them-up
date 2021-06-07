@@ -27,6 +27,7 @@ public:
     void Reload();
     bool GetWeaponUIData(FWeaponUIData& WeaponUIData) const;
     bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
+    bool IncreaseWeaponAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, int32 Amount);
 
 protected:
     virtual void BeginPlay() override;
@@ -66,6 +67,6 @@ private:
     bool CanEquip() const { return !bEquipInProgress && !bReloadInProgress; }
     bool CanReload() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress && CurrentWeapon->CanReload(); }
 
-    void OnEmptyClip();
+    void OnEmptyClip(ASTUBaseWeapon* WeaponToReload);
     void ReloadClip();
 };

@@ -23,6 +23,8 @@ public:
     void ReloadClip();
     bool CanReload() const { return WeaponAmmo.ClipAmmo < WeaponAmmo.ClipAmmoMax && WeaponAmmo.InventoryAmmo > 0; }
     bool EnoughAmmo() const { return WeaponAmmo.ClipAmmo > 0 && WeaponAmmo.InventoryAmmo > 0; }
+    bool IsEmpty() const { return WeaponAmmo.InventoryAmmo <= 0 && !WeaponAmmo.bIsInfinite && IsClipEmpty(); }
+    bool IncreaseAmmo(const int32 Amount);
     FWeaponUIData GetUIData() const { return WeaponUIData; }
     FAmmoData GetAmmoData() const { return WeaponAmmo; }
     FOnClipEmptySignature OnClipEmpty;
@@ -54,5 +56,5 @@ protected:
 
     void DecreaseAmmo();
     bool IsClipEmpty() const { return WeaponAmmo.ClipAmmo <= 0; }
-    bool IsEmpty() const { return WeaponAmmo.InventoryAmmo <= 0 && !WeaponAmmo.bIsInfinite && IsClipEmpty(); }
+    bool IsInventoryFull() const { return WeaponAmmo.InventoryAmmo >= WeaponAmmo.InventoryAmmoMax; }
 };

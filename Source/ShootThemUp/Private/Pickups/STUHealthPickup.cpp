@@ -1,4 +1,4 @@
-﻿// A simple Shoot Them Up game made during UE4 C++ course. All rights reserved.
+﻿// A simple Shoot Them Up game made durign UE4 C++ course. All rights reserved.
 
 
 #include "Pickups/STUHealthPickup.h"

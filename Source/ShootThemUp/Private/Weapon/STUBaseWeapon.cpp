@@ -91,12 +91,12 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
 void ASTUBaseWeapon::DecreaseAmmo()
 {
     if (IsEmpty()) return;
-    
+
     WeaponAmmo.ClipAmmo = FMath::Max(--WeaponAmmo.ClipAmmo, 0);
 
     if (IsClipEmpty() && !IsEmpty())
     {
-        OnClipEmpty.Broadcast();
+        OnClipEmpty.Broadcast(this);
     }
 }
 
@@ -109,7 +109,7 @@ void ASTUBaseWeapon::ReloadClip()
         if (WeaponAmmo.InventoryAmmo == 0) return;
 
         const int32 DeltaAmmo = WeaponAmmo.ClipAmmoMax - WeaponAmmo.ClipAmmo;
-        const int32 RestoredAmmo =  WeaponAmmo.InventoryAmmo < DeltaAmmo ? WeaponAmmo.InventoryAmmo : DeltaAmmo;
+        const int32 RestoredAmmo = WeaponAmmo.InventoryAmmo < DeltaAmmo ? WeaponAmmo.InventoryAmmo : DeltaAmmo;
         WeaponAmmo.InventoryAmmo = FMath::Max(WeaponAmmo.InventoryAmmo - DeltaAmmo, 0);
         WeaponAmmo.ClipAmmo = FMath::Max(WeaponAmmo.ClipAmmo + RestoredAmmo, WeaponAmmo.ClipAmmoMax);
     }
@@ -117,4 +117,22 @@ void ASTUBaseWeapon::ReloadClip()
     {
         WeaponAmmo.ClipAmmo = WeaponAmmo.ClipAmmoMax;
     }
+}
+
+bool ASTUBaseWeapon::IncreaseAmmo(const int32 Amount)
+{
+    if (IsInventoryFull() || WeaponAmmo.bIsInfinite) return false;
+
+
+    if (IsEmpty())
+    {
+        WeaponAmmo.InventoryAmmo = FMath::Min(Amount, WeaponAmmo.InventoryAmmoMax + WeaponAmmo.ClipAmmoMax);
+        OnClipEmpty.Broadcast(this);
+    }
+    else
+    {
+        WeaponAmmo.InventoryAmmo = FMath::Min(WeaponAmmo.InventoryAmmo + Amount, WeaponAmmo.InventoryAmmoMax);
+    }
+
+    return true;
 }

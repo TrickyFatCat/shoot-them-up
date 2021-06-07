@@ -82,6 +82,19 @@ bool USTUWeaponComponent::GetWeaponAmmoData(FAmmoData& AmmoData) const
     return false;
 }
 
+bool USTUWeaponComponent::IncreaseWeaponAmmo(const TSubclassOf<ASTUBaseWeapon> WeaponType, const int32 Amount)
+{
+    for (const auto Weapon : Weapons)
+    {
+        if (Weapon && Weapon->IsA(WeaponType))
+        {
+            return Weapon->IncreaseAmmo(Amount);
+        }
+    }
+    
+    return false;
+}
+
 void USTUWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
@@ -235,9 +248,25 @@ void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent
     bReloadInProgress = false;
 }
 
-void USTUWeaponComponent::OnEmptyClip()
+void USTUWeaponComponent::OnEmptyClip(ASTUBaseWeapon* WeaponToReload)
 {
-    ReloadClip();
+    if (!WeaponToReload) return;
+    
+    if (CurrentWeapon == WeaponToReload)
+    {
+        ReloadClip();
+    }
+    else
+    {
+        for (const auto Weapon : Weapons)
+        {
+            if (Weapon == WeaponToReload)
+            {
+                Weapon->ReloadClip();
+                break;
+            }
+        }
+    }
 }
 
 void USTUWeaponComponent::ReloadClip()

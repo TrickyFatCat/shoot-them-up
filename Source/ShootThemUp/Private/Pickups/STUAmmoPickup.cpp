@@ -2,7 +2,9 @@
 
 
 #include "Pickups/STUAmmoPickup.h"
-
+#include "STUUtils.h"
+#include "Components/STUWeaponComponent.h"
+#include "Components/STUHealthComponent.h"
 
 ASTUAmmoPickup::ASTUAmmoPickup()
 {
@@ -22,6 +24,14 @@ void ASTUAmmoPickup::Tick(float DeltaTime)
 
 bool ASTUAmmoPickup::ActivateEffect(APawn* PlayerPawn)
 {
-    return true;
+    const USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(PlayerPawn);
+
+    if (!HealthComponent || HealthComponent->GetIsDead()) return false;
+
+    USTUWeaponComponent* WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(PlayerPawn);
+
+    if (!WeaponComponent) return false;
+
+    return WeaponComponent->IncreaseWeaponAmmo(WeaponType, AmmoAmount);
 }
 
