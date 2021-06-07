@@ -2,6 +2,8 @@
 
 
 #include "Pickups/STUHealthPickup.h"
+#include "STUUtils.h"
+#include "Components/STUHealthComponent.h"
 
 
 ASTUHealthPickup::ASTUHealthPickup()
@@ -21,6 +23,10 @@ void ASTUHealthPickup::Tick(float DeltaTime)
 
 bool ASTUHealthPickup::ActivateEffect(APawn* PlayerPawn)
 {
-    return true;
+    USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(PlayerPawn);
+
+    if (!HealthComponent || HealthComponent->GetHealth() <= 0 || HealthComponent->GetHealth() >= HealthComponent->GetMaxHealth()) return false;
+
+    return HealthComponent->IncreaseHealth(HealAmount, true);
 }
 
