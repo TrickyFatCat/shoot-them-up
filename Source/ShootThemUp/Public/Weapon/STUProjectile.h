@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class UProjectileMovementComponent;
+class USTUWeaponFXComponent;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUProjectile : public AActor
@@ -24,6 +25,8 @@ protected:
     USphereComponent* CollisionComponent = nullptr;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
     UProjectileMovementComponent* MovementComponent = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+    USTUWeaponFXComponent* WeaponFXComponent = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     float DamageAmount = 50.f;
