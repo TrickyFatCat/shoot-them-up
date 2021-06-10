@@ -151,7 +151,15 @@ void ASTUBaseCharacter::StopSprinting()
 
 void ASTUBaseCharacter::OnDeath()
 {
-    PlayAnimMontage(DeathAnimMontage);
+    if (GetCurrentVelocity() != 0)
+    {
+        GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        GetMesh()->SetSimulatePhysics(true);
+    }
+    else
+    {
+        PlayAnimMontage(DeathAnimMontage);
+    }
 
     GetCharacterMovement()->DisableMovement();
     SetLifeSpan(DestroyTime);
