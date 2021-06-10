@@ -7,6 +7,8 @@
 #include "Objects/Resource.h"
 #include "STUHealthComponent.generated.h"
 
+class UCameraShakeBase;
+
 DECLARE_MULTICAST_DELEGATE(FOnDeath)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnShieldChanged, float)
@@ -67,6 +69,9 @@ private:
     
     // Damage
 private:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX", meta=(AllowPrivateAccess="true"))
+    TSubclassOf<UCameraShakeBase> DamageCameraShake;
+    void PlayCameraShake();
     UFUNCTION()
     void OnTakeAnyDamage(AActor* DamageActor,
                          float Damage,
