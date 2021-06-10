@@ -10,8 +10,8 @@
 class UCameraShakeBase;
 
 DECLARE_MULTICAST_DELEGATE(FOnDeath)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnShieldChanged, float)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnShieldChanged, float, float)
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
@@ -40,7 +40,7 @@ public:
     bool GetIsDead() const { return GetHealth() <= 0.f; }
     FOnDeath OnDeath;
     FOnHealthChanged OnHealthChanged;
-    void BroadcastOnHealthChanged(const float CurrentHealth);
+    void BroadcastOnHealthChanged(const float CurrentHealth, const float DeltaHealth);
 
 private:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess="true"))
@@ -59,7 +59,7 @@ public:
     UFUNCTION(BlueprintCallable, Category="Shield")
     void DecreaseShield(const float DeltaShield);
     FOnShieldChanged OnShieldChanged;
-    void BroadcastOnShieldChanged(const float CurrentShield);
+    void BroadcastOnShieldChanged(const float CurrentShield, const float DeltaShield);
 
 private:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess="true"))
@@ -71,7 +71,7 @@ private:
 private:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX", meta=(AllowPrivateAccess="true"))
     TSubclassOf<UCameraShakeBase> DamageCameraShake;
-    void PlayCameraShake();
+    void PlayCameraShake() const;
     UFUNCTION()
     void OnTakeAnyDamage(AActor* DamageActor,
                          float Damage,

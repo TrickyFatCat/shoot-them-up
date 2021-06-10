@@ -51,8 +51,8 @@ void ASTUBaseCharacter::BeginPlay()
     check(HealthTextComponent);
     check(GetCharacterMovement());
 
-    OnHealthChanged(HealthComponent->GetHealth());
-    OnShieldChanged(HealthComponent->GetShield());
+    OnHealthChanged(HealthComponent->GetHealth(), 0.f);
+    OnShieldChanged(HealthComponent->GetShield(), 0.f);
     HealthComponent->OnDeath.AddUObject(this, &ASTUBaseCharacter::OnDeath);
     HealthComponent->OnHealthChanged.AddUObject(this, &ASTUBaseCharacter::OnHealthChanged);
     HealthComponent->OnShieldChanged.AddUObject(this, &ASTUBaseCharacter::OnShieldChanged);
@@ -174,13 +174,13 @@ void ASTUBaseCharacter::OnDeath()
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void ASTUBaseCharacter::OnHealthChanged(const float Health)
+void ASTUBaseCharacter::OnHealthChanged(const float Health, const float DeltaHealth)
 {
     HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void ASTUBaseCharacter::OnShieldChanged(const float Shield)
+void ASTUBaseCharacter::OnShieldChanged(const float Shield, const float DeltaShield)
 {
     HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Shield)));
 }

@@ -22,11 +22,9 @@ void USTUHealthComponent::BeginPlay()
 
     HealthObject = NewObject<UResource>(this, TEXT("Health"));
     HealthObject->SetResourceData(HealthData);
-    HealthObject->OnValueIncreased.AddUObject(this, &USTUHealthComponent::BroadcastOnHealthChanged);
-    HealthObject->OnValueDecreased.AddUObject(this, &USTUHealthComponent::BroadcastOnHealthChanged);
+    HealthObject->OnValueChanged.AddUObject(this, &USTUHealthComponent::BroadcastOnHealthChanged);
     ShieldObject = NewObject<UResource>(this, TEXT("Shield"));
-    ShieldObject->OnValueIncreased.AddUObject(this, &USTUHealthComponent::BroadcastOnShieldChanged);
-    ShieldObject->OnValueDecreased.AddUObject(this, &USTUHealthComponent::BroadcastOnShieldChanged);
+    ShieldObject->OnValueChanged.AddUObject(this, &USTUHealthComponent::BroadcastOnShieldChanged);
     ShieldObject->SetResourceData(ShieldData);
 
     AActor* ComponentOwner = GetOwner();
@@ -60,9 +58,9 @@ bool USTUHealthComponent::IncreaseHealth(const float DeltaHealth, const bool bCl
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void USTUHealthComponent::BroadcastOnHealthChanged(const float CurrentHealth)
+void USTUHealthComponent::BroadcastOnHealthChanged(const float CurrentHealth, const float DeltaHealth)
 {
-    OnHealthChanged.Broadcast(CurrentHealth);
+    OnHealthChanged.Broadcast(CurrentHealth, DeltaHealth);
 }
 
 void USTUHealthComponent::DecreaseShield(const float DeltaShield)
@@ -73,12 +71,12 @@ void USTUHealthComponent::DecreaseShield(const float DeltaShield)
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void USTUHealthComponent::BroadcastOnShieldChanged(const float CurrentShield)
+void USTUHealthComponent::BroadcastOnShieldChanged(const float CurrentShield, const float DeltaShield)
 {
-    OnShieldChanged.Broadcast(CurrentShield);
+    OnShieldChanged.Broadcast(CurrentShield, DeltaShield);
 }
 
-void USTUHealthComponent::PlayCameraShake()
+void USTUHealthComponent::PlayCameraShake() const
 {
     if (!DamageCameraShake) return;
     
