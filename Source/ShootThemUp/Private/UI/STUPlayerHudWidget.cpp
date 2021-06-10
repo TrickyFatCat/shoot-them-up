@@ -53,3 +53,31 @@ bool USTUPlayerHudWidget::IsPlayerSpectating() const
     const APlayerController* Controller = GetOwningPlayer();
     return Controller && Controller->GetStateName() == NAME_Spectating;
 }
+
+bool USTUPlayerHudWidget::Initialize()
+{
+    USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
+
+    if (HealthComponent)
+    {
+        HealthComponent->OnHealthChanged.AddUObject(this, &USTUPlayerHudWidget::OnHealthChanged);
+        HealthComponent->OnShieldChanged.AddUObject(this, &USTUPlayerHudWidget::OnShieldChanged);
+    }
+    return Super::Initialize();
+}
+
+void USTUPlayerHudWidget::OnHealthChanged(const float Health, const float DeltaHealth)
+{
+    if (DeltaHealth < 0)
+    {
+        OnTakeDamage();
+    }
+}
+
+void USTUPlayerHudWidget::OnShieldChanged(const float Shield, const float DeltaShield)
+{
+    if (DeltaShield < 0)
+    {
+        OnTakeDamage();
+    }
+}
