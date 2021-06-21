@@ -5,6 +5,7 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 #include "Weapon/Components/STUWeaponFXComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
 ASTURifleWeapon::ASTURifleWeapon()
@@ -62,34 +63,18 @@ void ASTURifleWeapon::MakeShot()
 
     FHitResult HitResult;
     MakeHit(HitResult, TraceStart, TraceEnd);
+    FVector TraceFXEnd = TraceEnd;
+
+    
 
     if (HitResult.bBlockingHit)
     {
+        TraceFXEnd = HitResult.ImpactPoint;
         DealDamage(HitResult);
         WeaponFXComponent->PlayImpactFX(HitResult);
-        // DrawDebugLine(World,
-        //               GetMuzzleWorldLocation(),
-        //               HitResult.ImpactPoint,
-        //               FColor::Red,
-        //               false,
-        //               3.f,
-        //               0,
-        //               3.f);
-        // DrawDebugSphere(World, HitResult.ImpactPoint, 10.f, 24, FColor::Red, false, 5.f);
-    }
-    else
-    {
-        DrawDebugLine(World,
-                      GetMuzzleWorldLocation(),
-                      TraceEnd,
-                      FColor::Red,
-                      false,
-                      3.f,
-                      0,
-                      3.f
-        );
     }
 
+    SpawnTraceFX(GetMuzzleWorldLocation(), TraceFXEnd);
     DecreaseAmmo();
 }
 
@@ -134,3 +119,14 @@ void ASTURifleWeapon::SetMuzzleFXVisibility(const bool bIsVisible)
         MuzzleFXComponent->SetVisibility(bIsVisible, true);
     }
 }
+
+void ASTURifleWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd)
+{
+    UNiagaraComponent* TraceFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TraceFX, TraceStart);
+
+    if (TraceFXComponent)
+    {
+        TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName, TraceEnd);
+    }
+}
+

@@ -8,6 +8,7 @@
 
 class USTUWeaponFXComponent;
 class UNiagaraComponent;
+class UNiagaraSystem;
 
 /**
  * 
@@ -30,6 +31,10 @@ public:
 protected:
     UPROPERTY(VisibleAnywhere, Category="VFX");
     USTUWeaponFXComponent* WeaponFXComponent = nullptr;
+    UPROPERTY(EditDefaultsOnly, Category="VFX")
+    UNiagaraSystem* TraceFX = nullptr;
+    UPROPERTY(EditDefaultsOnly, Category="VFX")
+    FString TraceTargetName = "TraceTarget";
     virtual void BeginPlay() override;
     virtual void MakeShot() override;
     virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const override;
@@ -45,4 +50,6 @@ private:
     UNiagaraComponent* MuzzleFXComponent;
     void InitMuzzleFX();
     void SetMuzzleFXVisibility(const bool bIsVisible);
+
+    void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
 };
