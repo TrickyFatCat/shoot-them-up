@@ -3,13 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Actor.h"
 #include "Weapon/STUCoreTypes.h"
 #include "STUBaseWeapon.generated.h"
 
 class USkeletalMeshComponent;
 class APlayerController;
-
+class UNiagaraSystem;
+class UNiagaraComponent;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
@@ -46,6 +48,10 @@ protected:
     FAmmoData WeaponAmmo{20, 20, 100, 100, false};
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     FWeaponUIData WeaponUIData;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
+    UNiagaraSystem* MuzzleFX;
+
+    UNiagaraComponent* SpawnMuzzleFX();
 
     virtual void MakeShot();
     APlayerController* GetPlayerController() const;

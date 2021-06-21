@@ -7,6 +7,7 @@
 #include "STURifleWeapon.generated.h"
 
 class USTUWeaponFXComponent;
+class UNiagaraComponent;
 
 /**
  * 
@@ -39,4 +40,9 @@ private:
     FTimerHandle ShotTimerHandle;
     float TimeBetweenShots = 1.f;
     void DealDamage(const FHitResult& HitResult);
+
+    UPROPERTY()
+    UNiagaraComponent* MuzzleFXComponent;
+    void InitMuzzleFX();
+    void SetMuzzleFXVisibility(const bool bIsVisible);
 };

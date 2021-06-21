@@ -6,6 +6,8 @@
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
 
@@ -30,6 +32,17 @@ void ASTUBaseWeapon::BeginPlay()
     Super::BeginPlay();
     WeaponAmmo.ClipAmmo = WeaponAmmo.ClipAmmoMax;
     WeaponAmmo.InventoryAmmo = WeaponAmmo.InventoryAmmoMax;
+}
+
+UNiagaraComponent* ASTUBaseWeapon::SpawnMuzzleFX()
+{
+    return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleFX,
+                                                 WeaponMesh,
+                                                 MuzzleSocketName,
+                                                 FVector::ZeroVector,
+                                                 FRotator::ZeroRotator,
+                                                 EAttachLocation::SnapToTarget,
+                                                 true);
 }
 
 void ASTUBaseWeapon::MakeShot()
