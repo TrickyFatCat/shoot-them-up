@@ -3,6 +3,21 @@
 
 #include "AI/STUAIController.h"
 #include "AI/STUAICharacter.h"
+#include "Components/STUAIPerceptionComponent.h"
+
+ASTUAIController::ASTUAIController()
+{
+    STUAIPerceptionComponent = CreateDefaultSubobject<USTUAIPerceptionComponent>("STUAIPerceptionComponent");
+    SetPerceptionComponent(*STUAIPerceptionComponent);
+}
+
+void ASTUAIController::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
+
+    AActor* TargetActor = STUAIPerceptionComponent->GetClosestEnemy();
+    SetFocus(TargetActor);
+}
 
 void ASTUAIController::OnPossess(APawn* InPawn)
 {

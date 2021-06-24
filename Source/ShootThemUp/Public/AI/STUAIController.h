@@ -6,14 +6,21 @@
 #include "AIController.h"
 #include "STUAIController.generated.h"
 
+class USTUAIPerceptionComponent;
+
 /**
  * 
  */
 UCLASS()
 class SHOOTTHEMUP_API ASTUAIController : public AAIController
 {
-	GENERATED_BODY()
-
-	protected:
-	virtual void OnPossess(APawn* InPawn) override;
+    GENERATED_BODY()
+public:
+    ASTUAIController();
+    
+protected:
+    virtual void Tick(float DeltaSeconds) override;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+    USTUAIPerceptionComponent* STUAIPerceptionComponent = nullptr;
+    virtual void OnPossess(APawn* InPawn) override;
 };
