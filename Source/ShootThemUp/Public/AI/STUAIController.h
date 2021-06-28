@@ -23,4 +23,10 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
     USTUAIPerceptionComponent* STUAIPerceptionComponent = nullptr;
     virtual void OnPossess(APawn* InPawn) override;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI")
+    FName TargetEneemyKeyName = "EnemyActor";
+
+private:
+    AActor* GetTargetActor() const;
 };
