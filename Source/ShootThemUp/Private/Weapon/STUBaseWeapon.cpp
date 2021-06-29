@@ -37,12 +37,12 @@ void ASTUBaseWeapon::BeginPlay()
 UNiagaraComponent* ASTUBaseWeapon::SpawnMuzzleFX()
 {
     return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleFX,
-                                                 WeaponMesh,
-                                                 MuzzleSocketName,
-                                                 FVector::ZeroVector,
-                                                 FRotator::ZeroRotator,
-                                                 EAttachLocation::SnapToTarget,
-                                                 true);
+                                                        WeaponMesh,
+                                                        MuzzleSocketName,
+                                                        FVector::ZeroVector,
+                                                        FRotator::ZeroRotator,
+                                                        EAttachLocation::SnapToTarget,
+                                                        true);
 }
 
 void ASTUBaseWeapon::MakeShot()
@@ -60,11 +60,24 @@ APlayerController* ASTUBaseWeapon::GetPlayerController() const
 
 bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
 {
-    const APlayerController* Controller = GetPlayerController();
+    ACharacter* Character = Cast<ACharacter>(GetOwner());
 
-    if (!Controller) return false;
+    if (!Character) return false;
 
-    Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+    if (Character->IsPlayerControlled())
+    {
+        const APlayerController* Controller = GetPlayerController();
+
+        if (!Controller) return false;
+
+        Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+    }
+    else
+    {
+        ViewLocation = GetMuzzleWorldLocation();
+        ViewRotation = WeaponMesh->GetSocketRotation(MuzzleSocketName);
+    }
+
     return true;
 }
 
