@@ -26,6 +26,7 @@ public:
     bool CanReload() const { return WeaponAmmo.ClipAmmo < WeaponAmmo.ClipAmmoMax && WeaponAmmo.InventoryAmmo > 0; }
     bool EnoughAmmo() const { return WeaponAmmo.ClipAmmo > 0 && WeaponAmmo.InventoryAmmo > 0; }
     bool IsEmpty() const { return WeaponAmmo.InventoryAmmo <= 0 && !WeaponAmmo.bIsInfinite && IsClipEmpty(); }
+    bool IsClipEmpty() const { return WeaponAmmo.ClipAmmo <= 0; }
     bool IncreaseAmmo(const int32 Amount);
     FWeaponUIData GetUIData() const { return WeaponUIData; }
     FAmmoData GetAmmoData() const { return WeaponAmmo; }
@@ -61,6 +62,5 @@ protected:
     void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
 
     void DecreaseAmmo();
-    bool IsClipEmpty() const { return WeaponAmmo.ClipAmmo <= 0; }
     bool IsInventoryFull() const { return WeaponAmmo.InventoryAmmo >= WeaponAmmo.InventoryAmmoMax; }
 };

@@ -20,10 +20,10 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
 
 public:
     USTUWeaponComponent();
-    void StartFire();
+    virtual void StartFire();
     void StopFire();
-    void EquipNextWeapon();
-    void EquipPreviousWeapon();
+    virtual void EquipNextWeapon();
+    virtual void EquipPreviousWeapon();
     void Reload();
     bool GetWeaponUIData(FWeaponUIData& WeaponUIData) const;
     bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
@@ -42,20 +42,22 @@ protected:
     UAnimMontage* EquipAnimMontage = nullptr;
     UPROPERTY()
     UAnimMontage* CurrentReloadAnimMontage = nullptr;
-    
-private:
-    UPROPERTY()
-    ACharacter* Owner = nullptr;
     UPROPERTY()
     ASTUBaseWeapon* CurrentWeapon = nullptr;
     UPROPERTY()
     TArray<ASTUBaseWeapon*> Weapons;
     int32 CurrentWeaponIndex = 0;
+    bool CanFire() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress; }
+    bool CanEquip() const { return !bEquipInProgress && !bReloadInProgress; }
+    void EquipWeapon(const int32 WeaponIndex);
+    
+private:
+    UPROPERTY()
+    ACharacter* Owner = nullptr;
     bool bEquipInProgress = false;
     bool bReloadInProgress = false;
     void SpawnWeapons();
     void AttachWeaponToSocket(ASTUBaseWeapon* Weapon, USkeletalMeshComponent* Mesh, const FName SocketName);
-    void EquipWeapon(const int32 WeaponIndex);
 
     void PlayAnimMontage(UAnimMontage* Animation) const;
     void InitAnimations();
@@ -63,9 +65,10 @@ private:
     void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
     void OnReloadFinished(USkeletalMeshComponent* MeshComponent);
 
-    bool CanFire() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress; }
-    bool CanEquip() const { return !bEquipInProgress && !bReloadInProgress; }
-    bool CanReload() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress && CurrentWeapon->CanReload(); }
+    bool CanReload() const
+    {
+        return CurrentWeapon && !bEquipInProgress && !bReloadInProgress && CurrentWeapon->CanReload();
+    }
 
     void OnEmptyClip(ASTUBaseWeapon* WeaponToReload);
     void ReloadClip();
