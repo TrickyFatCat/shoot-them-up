@@ -50,16 +50,16 @@ protected:
     bool CanFire() const { return CurrentWeapon && !bEquipInProgress && !bReloadInProgress; }
     bool CanEquip() const { return !bEquipInProgress && !bReloadInProgress; }
     void EquipWeapon(const int32 WeaponIndex);
+    bool bEquipInProgress = false;
+    void PlayAnimMontage(UAnimMontage* Animation) const;
     
 private:
     UPROPERTY()
     ACharacter* Owner = nullptr;
-    bool bEquipInProgress = false;
     bool bReloadInProgress = false;
     void SpawnWeapons();
     void AttachWeaponToSocket(ASTUBaseWeapon* Weapon, USkeletalMeshComponent* Mesh, const FName SocketName);
 
-    void PlayAnimMontage(UAnimMontage* Animation) const;
     void InitAnimations();
     void OnChangeWeapons(USkeletalMeshComponent* MeshComponent);
     void OnEquipFinished(USkeletalMeshComponent* MeshComponent);

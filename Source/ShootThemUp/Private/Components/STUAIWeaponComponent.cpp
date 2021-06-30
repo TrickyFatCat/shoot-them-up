@@ -34,7 +34,8 @@ void USTUAIWeaponComponent::EquipNextWeapon()
     if (CurrentWeaponIndex != NextWeaponIndex)
     {
         CurrentWeaponIndex = NextWeaponIndex;
-        EquipWeapon(CurrentWeaponIndex);
+        bEquipInProgress = true;
+        PlayAnimMontage(EquipAnimMontage);
     }
 }
 
