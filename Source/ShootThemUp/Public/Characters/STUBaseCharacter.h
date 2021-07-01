@@ -69,13 +69,13 @@ public:
 protected:
     UPROPERTY(EditDefaultsOnly, Category="Animation")
     UAnimMontage* DeathAnimMontage = nullptr;
+    virtual void OnDeath();
 private:
     const float DestroyTime = 5.f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
     USTUHealthComponent* HealthComponent = nullptr;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
     UTextRenderComponent* HealthTextComponent = nullptr;
-    void OnDeath();
     void OnHealthChanged(const float Health, const float DeltaHealth);
     void OnShieldChanged(const float Shield, const float DeltaShield);
 
