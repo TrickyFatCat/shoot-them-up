@@ -95,6 +95,19 @@ bool USTUWeaponComponent::IncreaseWeaponAmmo(const TSubclassOf<ASTUBaseWeapon> W
     return false;
 }
 
+bool USTUWeaponComponent::IsAmmoNeeded(TSubclassOf<ASTUBaseWeapon> WeaponType)
+{
+    for (const auto Weapon : Weapons)
+    {
+        if (Weapon && Weapon->IsA(WeaponType))
+        {
+            return Weapon->IsEmpty();
+        }
+    }
+
+    return false;
+}
+
 void USTUWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
