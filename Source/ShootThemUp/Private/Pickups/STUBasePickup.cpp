@@ -58,6 +58,7 @@ void ASTUBasePickup::Hide()
     GetRootComponent()->SetVisibility(false, true);
     FTimerHandle RespawnTimerHandle;
     GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnTime);
+    bIsActive = false;
 }
 
 void ASTUBasePickup::Respawn()
@@ -68,6 +69,7 @@ void ASTUBasePickup::Respawn()
 
     GetRootComponent()->SetVisibility(true, true);
     GenerateRotationYaw();
+    bIsActive = true;
 }
 
 void ASTUBasePickup::GenerateRotationYaw()

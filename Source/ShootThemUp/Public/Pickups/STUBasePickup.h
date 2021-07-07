@@ -22,8 +22,11 @@ protected:
 
 public:
     virtual void Tick(float DeltaTime) override;
+    bool GetIsActive() const { return bIsActive; };
     
 protected:
+    UPROPERTY(VisibleAnywhere, Category="Pickup")
+    bool bIsActive;
     UPROPERTY(VisibleAnywhere, Category="Components")
     USphereComponent* CollisionComponent = nullptr;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Pickup")
