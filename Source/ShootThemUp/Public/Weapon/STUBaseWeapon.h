@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "GameFramework/Actor.h"
-#include "Weapon/STUCoreTypes.h"
+#include "STUCoreTypes.h"
 #include "STUBaseWeapon.generated.h"
 
 class USkeletalMeshComponent;

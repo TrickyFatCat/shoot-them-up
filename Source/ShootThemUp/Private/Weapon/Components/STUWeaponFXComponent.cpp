@@ -4,7 +4,7 @@
 #include "Weapon/Components/STUWeaponFXComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
-#include "Weapon/STUCoreTypes.h"
+#include "STUCoreTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/DecalComponent.h"
 

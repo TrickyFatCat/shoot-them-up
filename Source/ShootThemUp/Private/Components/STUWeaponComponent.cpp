@@ -3,7 +3,7 @@
 
 #include "Components/STUWeaponComponent.h"
 #include "Weapon/STUBaseWeapon.h"
-#include "Weapon/STUCoreTypes.h"
+#include "STUCoreTypes.h"
 #include "GameFramework/Character.h"
 #include "Animations/STUEquipFinishedAnimNotify.h"
 #include "Animations/STUChangeWeaponAnimNotify.h"

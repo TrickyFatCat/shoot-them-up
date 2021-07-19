@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/STUWeaponComponent.h"
-#include "Weapon/STUCoreTypes.h"
+#include "STUCoreTypes.h"
 #include "STUPlayerHudWidget.generated.h"
 
 class USTUHealthComponent;
