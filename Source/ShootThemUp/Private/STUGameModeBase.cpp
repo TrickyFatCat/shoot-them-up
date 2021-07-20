@@ -19,11 +19,13 @@ void ASTUGameModeBase::StartPlay()
 {
     Super::StartPlay();
     SpawnBots();
+    CurrentRound = 1;
+    StartRound();
 }
 
 UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
-    if(InController && InController->IsA<AAIController>())
+    if (InController && InController->IsA<AAIController>())
     {
         return AIPawnClass;
     }
@@ -33,13 +35,39 @@ UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AContr
 
 void ASTUGameModeBase::SpawnBots()
 {
-   if (!GetWorld()) return;
+    if (!GetWorld()) return;
 
-    for(int32 i = 0; i < GameData.PlayersNumber - 1; ++i)
+    for (int32 i = 0; i < GameData.PlayersNumber - 1; ++i)
     {
         FActorSpawnParameters SpawnInfo;
         SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
         AAIController* STUAIController = GetWorld()->SpawnActor<AAIController>(AIControllerClass, SpawnInfo);
         RestartPlayer(STUAIController);
+    }
+}
+
+void ASTUGameModeBase::StartRound()
+{
+    RoundCountDown = GameData.RoundDuration;
+    GetWorldTimerManager().SetTimer(GameRoundTimerHandle, this, &ASTUGameModeBase::UpdateRoundTimer, 1.0f, true);
+}
+
+void ASTUGameModeBase::UpdateRoundTimer()
+{
+    UE_LOG(LogTemp, Display, TEXT("Time: %i | Round: %i/%i"), RoundCountDown, CurrentRound, GameData.RoundsNumber);
+    
+    if (--RoundCountDown == 0)
+    {
+        GetWorldTimerManager().ClearTimer(GameRoundTimerHandle);
+
+        if (CurrentRound + 1 <= GameData.RoundsNumber)
+        {
+            ++CurrentRound;
+            StartRound();
+        }
+        else
+        {
+            UE_LOG(LogTemp, Display, TEXT("===== GAME OVER ====="));
+        }
     }
 }

@@ -79,4 +79,8 @@ struct FGameData
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Game", meta=(ClampMin="1", ClampMax="50"))
     int32 PlayersNumber = 2;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Game", meta=(ClampMin="1", ClampMax="10"))
+    int32 RoundsNumber = 4;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Game", meta=(ClampMin="1", ClampMax="300"))
+    int32 RoundDuration = 10; // In seconds
 };
