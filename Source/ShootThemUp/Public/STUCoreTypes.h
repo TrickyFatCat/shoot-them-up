@@ -18,7 +18,10 @@ struct FAmmoData
     int32 ClipAmmoMax = 20;
     UPROPERTY(BlueprintReadOnly)
     int32 InventoryAmmo = 100;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon", meta=(EditCondition="!bIsInfinite", ClampMin="0"))
+    UPROPERTY(EditDefaultsOnly,
+        BlueprintReadWrite,
+        Category="Weapon",
+        meta=(EditCondition="!bIsInfinite", ClampMin="0"))
     int32 InventoryAmmoMax = 100;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     bool bIsInfinite = false;
@@ -28,7 +31,7 @@ USTRUCT(BlueprintType)
 struct FWeaponData
 {
     GENERATED_USTRUCT_BODY()
-    
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     TSubclassOf<ASTUBaseWeapon> WeaponClass;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
@@ -83,4 +86,9 @@ struct FGameData
     int32 RoundsNumber = 4;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Game", meta=(ClampMin="1", ClampMax="300"))
     int32 RoundDuration = 10; // In seconds
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    FLinearColor DefaultTeamColor = FLinearColor::Red;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    TArray<FLinearColor> TeamColors;
 };

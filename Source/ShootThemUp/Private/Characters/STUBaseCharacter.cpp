@@ -92,6 +92,15 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Reload);
 }
 
+void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& TeamColor)
+{
+    UMaterialInstanceDynamic* MaterialInstance = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+
+    if (!MaterialInstance) return;
+
+    MaterialInstance->SetVectorParameterValue(MaterialColorName, TeamColor);
+}
+
 void ASTUBaseCharacter::SetInputYawScale(const float NewYawScale) const
 {
     ASTUPlayerController* PlayerController = Cast<ASTUPlayerController>(GetController());

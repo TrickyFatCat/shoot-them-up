@@ -33,6 +33,13 @@ public:
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+    // Materials
+public:
+    void SetPlayerColor(const FLinearColor& TeamColor);
+protected:
+    UPROPERTY(EditDefaultsOnly, Category="Material")
+    FName MaterialColorName = "Paint Color";
+
     // Camera
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Camera")
@@ -63,7 +70,7 @@ protected:
     void MoveRight(const float AxisValue);
     void StartSprinting();
     void StopSprinting();
-    
+
     // Health and damage
 public:
 protected:
