@@ -46,7 +46,7 @@ void ASTURifleWeapon::MakeShot()
     UWorld* World = GetWorld();
 
     if (!World) return;
-    
+
     if (IsClipEmpty())
     {
         StopFire();
@@ -65,7 +65,6 @@ void ASTURifleWeapon::MakeShot()
     MakeHit(HitResult, TraceStart, TraceEnd);
     FVector TraceFXEnd = TraceEnd;
 
-    
 
     if (HitResult.bBlockingHit)
     {
@@ -98,7 +97,7 @@ void ASTURifleWeapon::DealDamage(const FHitResult& HitResult)
 
     if (!DamagedActor) return;
 
-    DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
+    DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetController(), this);
 }
 
 void ASTURifleWeapon::InitMuzzleFX()
@@ -122,7 +121,10 @@ void ASTURifleWeapon::SetMuzzleFXVisibility(const bool bIsVisible)
 
 void ASTURifleWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd)
 {
-    UNiagaraComponent* TraceFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TraceFX, TraceStart);
+    UNiagaraComponent* TraceFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+        GetWorld(),
+        TraceFX,
+        TraceStart);
 
     if (TraceFXComponent)
     {
@@ -130,3 +132,8 @@ void ASTURifleWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& Tra
     }
 }
 
+AController* ASTURifleWeapon::GetController() const
+{
+    const APawn* Pawn = Cast<APawn>(GetOwner());
+    return Pawn ? Pawn->GetController() : nullptr;
+}

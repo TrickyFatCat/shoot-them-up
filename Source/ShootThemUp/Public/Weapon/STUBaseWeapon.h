@@ -55,7 +55,6 @@ protected:
     UNiagaraComponent* SpawnMuzzleFX();
 
     virtual void MakeShot();
-    APlayerController* GetPlayerController() const;
     bool GetPlayerViewPoint(FVector& ViewLocation, FRotator &ViewRotation) const;
     FVector GetMuzzleWorldLocation() const;
     virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;

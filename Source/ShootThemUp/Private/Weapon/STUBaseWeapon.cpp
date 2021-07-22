@@ -49,15 +49,6 @@ void ASTUBaseWeapon::MakeShot()
 {
 }
 
-APlayerController* ASTUBaseWeapon::GetPlayerController() const
-{
-    const ACharacter* Player = Cast<ACharacter>(GetOwner());
-
-    if (!Player) return nullptr;
-
-    return Player->GetController<APlayerController>();
-}
-
 bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
 {
     ACharacter* Character = Cast<ACharacter>(GetOwner());
@@ -66,7 +57,7 @@ bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRot
 
     if (Character->IsPlayerControlled())
     {
-        const APlayerController* Controller = GetPlayerController();
+        const APlayerController* Controller = Character->GetController<APlayerController>();
 
         if (!Controller) return false;
 
