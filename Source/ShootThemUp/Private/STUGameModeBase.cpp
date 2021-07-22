@@ -36,6 +36,22 @@ UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AContr
     return AIPawnClass;
 }
 
+void ASTUGameModeBase::RegisterKill(AController* KillerController, AController* VictimController)
+{
+    ASTUPlayerState* KillerPlayerState = KillerController ? Cast<ASTUPlayerState>(KillerController->PlayerState) : nullptr;
+    ASTUPlayerState* VictimPlayerState = VictimController ? Cast<ASTUPlayerState>(VictimController->PlayerState) : nullptr;
+
+    if (KillerPlayerState)
+    {
+        KillerPlayerState->AddKill();
+    }
+
+    if (VictimPlayerState)
+    {
+        VictimPlayerState->AddDeath();
+    }
+}
+
 void ASTUGameModeBase::SpawnBots()
 {
     if (!GetWorld()) return;
@@ -71,6 +87,7 @@ void ASTUGameModeBase::UpdateRoundTimer()
         else
         {
             UE_LOG(LogTemp, Display, TEXT("===== GAME OVER ====="));
+            ShowPlayersStatistics();
         }
     }
 }
@@ -143,4 +160,22 @@ void ASTUGameModeBase::SetPlayerColor(AController* Controller)
     if (!PlayerState) return;
 
     Character->SetPlayerColor(PlayerState->GetTeamColor());
+}
+
+void ASTUGameModeBase::ShowPlayersStatistics()
+{
+    if (!GetWorld()) return;
+    
+    for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
+    {
+        AController* Controller = It->Get();
+        
+        if (!Controller) continue;
+
+        ASTUPlayerState* PlayerState = Cast<ASTUPlayerState>(Controller->PlayerState);
+
+        if (!PlayerState) continue;
+
+        PlayerState->LogStatistics();
+    }
 }

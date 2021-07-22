@@ -7,6 +7,7 @@
 #include "GameFramework/Controller.h"
 #include "Camera/CameraShake.h"
 #include "Objects/Resource.h"
+#include "STUGameModeBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All, All)
 
@@ -36,7 +37,7 @@ void USTUHealthComponent::BeginPlay()
 
 }
 
-void USTUHealthComponent::DecreaseHealth(const float DeltaHealth)
+void USTUHealthComponent::DecreaseHealth(const float DeltaHealth, AController* DecreasedBy)
 {
     if (DeltaHealth <= 0.f || GetHealth() <= 0.f) return;
     
@@ -45,6 +46,7 @@ void USTUHealthComponent::DecreaseHealth(const float DeltaHealth)
     if (GetIsDead())
     {
         ShieldObject->SetAutoIncreaseEnabled(false);
+        RegisterKill(DecreasedBy);
         OnDeath.Broadcast();
     }
 }
@@ -103,7 +105,7 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
 
     if (CurrentShield <= 0.f)
     {
-        DecreaseHealth(Damage);
+        DecreaseHealth(Damage, InstigatedBy);
         ShieldObject->StopAutoIncrease();
         ShieldObject->StartAutoIncrease();
     }
@@ -117,9 +119,22 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
         {
             Damage -= CurrentShield;
             DecreaseShield(CurrentShield);
-            DecreaseHealth(Damage);
+            DecreaseHealth(Damage, InstigatedBy);
         }
     }
 
     PlayCameraShake();
+}
+
+void USTUHealthComponent::RegisterKill(AController* KillerController)
+{
+    if (!GetWorld()) return;
+    
+    ASTUGameModeBase* GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+
+    if (!GameMode) return;
+
+    APawn* VictimPawn = Cast<APawn>(GetOwner());
+    AController* VictimController = VictimPawn ? VictimPawn->Controller : nullptr;
+    GameMode->RegisterKill(KillerController, VictimController);
 }

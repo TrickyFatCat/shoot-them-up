@@ -23,6 +23,8 @@ public:
 	virtual void StartPlay() override;
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 
+	void RegisterKill(AController* KillerController, AController* VictimController);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Game")
 	TSubclassOf<AAIController> AIControllerClass = nullptr;
@@ -48,4 +50,6 @@ private:
 	void CreateTeams();
 	FLinearColor DetermineTeamColor(int32 TeamID) const;
 	void SetPlayerColor(AController* Controller);
+
+	void ShowPlayersStatistics();
 };

@@ -33,7 +33,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Health")
     float GetNormalizedHealth() const { return HealthObject->GetNormalizedValue(); }
     UFUNCTION(BlueprintCallable, Category="Health")
-    void DecreaseHealth(const float DeltaHealth);
+    void DecreaseHealth(const float DeltaHealth, AController* DecreasedBy);
     UFUNCTION(BlueprintCallable, Category="Health")
     bool IncreaseHealth(const float DeltaHealth, const bool bClampToMax);
     UFUNCTION(BlueprintPure)
@@ -78,4 +78,5 @@ private:
                          const UDamageType* DamageType,
                          AController* InstigatedBy,
                          AActor* DamageCauser);
+    void RegisterKill(AController* KillerController);
 };
