@@ -33,7 +33,7 @@ UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AContr
         return AIPawnClass;
     }
 
-    return AIPawnClass;
+    return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
 void ASTUGameModeBase::RegisterKill(AController* KillerController, AController* VictimController)
