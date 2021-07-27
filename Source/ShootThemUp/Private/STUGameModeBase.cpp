@@ -11,6 +11,8 @@
 #include "STUUtils.h"
 #include "Components/STURespawnComponent.h"
 
+constexpr static int32 MinRoundTimeForRespawn = 10; // In seconds
+
 ASTUGameModeBase::ASTUGameModeBase()
 {
     DefaultPawnClass = ASTUBaseCharacter::StaticClass();
@@ -192,6 +194,10 @@ void ASTUGameModeBase::ShowPlayersStatistics()
 
 void ASTUGameModeBase::StartRespawn(AController* Controller)
 {
+    const bool CanRespawned = RoundCountDown > MinRoundTimeForRespawn + GameData.RespawnTime;
+
+    if (!CanRespawned) return;
+    
     USTURespawnComponent* RespawnComponent = STUUtils::GetSTUPlayerComponent<USTURespawnComponent>(Controller);
 
     if (!RespawnComponent) return;
