@@ -39,4 +39,5 @@ public:
 private:
     void OnHealthChanged(const float Health, const float DeltaHealth);
     void OnShieldChanged(const float Shield, const float DeltaShield);
+    void OnNewPawn(APawn* Pawn);
 };
