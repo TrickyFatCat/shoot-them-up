@@ -7,6 +7,7 @@
 #include "STUAIController.generated.h"
 
 class USTUAIPerceptionComponent;
+class USTURespawnComponent;
 
 /**
  * 
@@ -22,6 +23,8 @@ protected:
     virtual void Tick(float DeltaSeconds) override;
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
     USTUAIPerceptionComponent* STUAIPerceptionComponent = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+    USTURespawnComponent* RespawnComponent = nullptr;
     virtual void OnPossess(APawn* InPawn) override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI")
