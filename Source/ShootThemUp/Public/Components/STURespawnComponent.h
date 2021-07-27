@@ -17,6 +17,9 @@ public:
 
     void StartRespawn(const int32 RespawnTime);
 
+    int32 GetRespawnCountDown() const { return RespawnCountDown; }
+    bool IsRespawnActive() const;
+
 private:
     FTimerHandle RespawnTimerHandle;
     int32 RespawnCountDown;
