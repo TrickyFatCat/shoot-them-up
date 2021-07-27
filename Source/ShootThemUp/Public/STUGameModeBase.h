@@ -59,4 +59,6 @@ private:
 	void ShowPlayersStatistics();
 
 	void StartRespawn(AController* Controller);
+
+	void GameOver();
 };
