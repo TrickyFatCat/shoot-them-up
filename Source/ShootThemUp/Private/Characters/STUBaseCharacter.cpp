@@ -5,10 +5,6 @@
 #include "Characters/STUBaseCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
-#include "Camera/CameraComponent.h"
-#include "Characters/Controllers/STUPlayerController.h"
-#include "Components/InputComponent.h"
-#include "Components/TextRenderComponent.h"
 #include "Components/STUCharacterMovementComponent.h"
 #include "Components/STUHealthComponent.h"
 #include "Components/STUWeaponComponent.h"
@@ -20,35 +16,16 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
-    SpringArmComponent->SetupAttachment(GetRootComponent());
-    SpringArmComponent->bUsePawnControlRotation = true;
-    SpringArmComponent->SocketOffset = FVector(0.f, 75.f, 80.f);
-
-    CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
-    CameraComponent->SetupAttachment(SpringArmComponent);
-
     HealthComponent = CreateDefaultSubobject<USTUHealthComponent>("HealthComponent");
-    HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
-    HealthTextComponent->SetupAttachment(GetRootComponent());
-    HealthTextComponent->SetOwnerNoSee(true);
-
     WeaponComponent = CreateDefaultSubobject<USTUWeaponComponent>("WeaponComponent");
 }
 
 void ASTUBaseCharacter::BeginPlay()
 {
     Super::BeginPlay();
-    ASTUPlayerController* CurrentController = Cast<ASTUPlayerController>(GetController());
 
-    if (CurrentController)
-    {
-       
-        DefaultInputYawScale = CurrentController->InputYawScale;
-    }
 
     check(HealthComponent);
-    check(HealthTextComponent);
     check(GetCharacterMovement());
 
     OnHealthChanged(HealthComponent->GetHealth(), 0.f);
@@ -65,33 +42,6 @@ void ASTUBaseCharacter::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-    // Movement bindings
-    PlayerInputComponent->BindAxis("MoveForward", this, &ASTUBaseCharacter::MoveForward);
-    PlayerInputComponent->BindAxis("MoveRight", this, &ASTUBaseCharacter::MoveRight);
-
-    // Camera bindings
-    PlayerInputComponent->BindAxis("LookUp", this, &ASTUBaseCharacter::AddControllerPitchInput);
-    PlayerInputComponent->BindAxis("TurnAround", this, &ASTUBaseCharacter::AddControllerYawInput);
-
-    // Jump bindings
-    PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::Jump);
-
-    // Sprint bindings
-    PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASTUBaseCharacter::StartSprinting);
-    PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::StopSprinting);
-
-    // Weapon bindings
-    PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::StartFire);
-    PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USTUWeaponComponent::StopFire);
-    PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::EquipNextWeapon);
-    PlayerInputComponent->BindAction("PreviousWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::EquipPreviousWeapon);
-    PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Reload);
-}
-
 void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& TeamColor)
 {
     UMaterialInstanceDynamic* MaterialInstance = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
@@ -101,19 +51,9 @@ void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& TeamColor)
     MaterialInstance->SetVectorParameterValue(MaterialColorName, TeamColor);
 }
 
-void ASTUBaseCharacter::SetInputYawScale(const float NewYawScale) const
-{
-    ASTUPlayerController* PlayerController = Cast<ASTUPlayerController>(GetController());
-
-    if (PlayerController)
-    {
-        PlayerController->InputYawScale = NewYawScale;
-    }
-}
-
 bool ASTUBaseCharacter::GetIsSprinting() const
 {
-    return bSprintPressed && bIsMovingForward && !GetVelocity().IsZero();
+    return false;
 }
 
 float ASTUBaseCharacter::GetMovementDirection() const
@@ -128,34 +68,16 @@ float ASTUBaseCharacter::GetMovementDirection() const
     return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
 }
 
-void ASTUBaseCharacter::MoveForward(const float AxisValue)
-{
-    bIsMovingForward = AxisValue > 0.f;
-
-    if (AxisValue == 0.f) return;
-
-    AddMovementInput(GetActorForwardVector(), AxisValue);
-
-    SetInputYawScale(GetIsSprinting() ? SprintInputYawScale : DefaultInputYawScale);
-}
-
-void ASTUBaseCharacter::MoveRight(const float AxisValue)
-{
-    if (AxisValue == 0.f || GetIsSprinting()) return;
-
-    AddMovementInput(GetActorRightVector(), AxisValue);
-}
-
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::StartSprinting()
 {
-    bSprintPressed = true;
+    bIsSprinting = true;
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::StopSprinting()
 {
-    bSprintPressed = false;
+    bIsSprinting = false;
 }
 
 void ASTUBaseCharacter::OnDeath()
@@ -173,11 +95,6 @@ void ASTUBaseCharacter::OnDeath()
     GetCharacterMovement()->DisableMovement();
     SetLifeSpan(DestroyTime);
 
-    if (Controller)
-    {
-        Controller->ChangeState(NAME_Spectating);
-    }
-
     GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     WeaponComponent->StopFire();
 }
@@ -185,13 +102,11 @@ void ASTUBaseCharacter::OnDeath()
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::OnHealthChanged(const float Health, const float DeltaHealth)
 {
-    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void ASTUBaseCharacter::OnShieldChanged(const float Shield, const float DeltaShield)
 {
-    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Shield)));
 }
 
 void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)
