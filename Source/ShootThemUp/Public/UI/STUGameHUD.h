@@ -21,6 +21,12 @@ protected:
     virtual void BeginPlay() override;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
     TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+    TSubclassOf<UUserWidget> PauseWidgetClass;
 private:
+    UPROPERTY()
+    TMap<ESTUMatchState, UUserWidget*> GameWidgets;
+    UPROPERTY()
+    UUserWidget* CurrentWidget = nullptr;
     void OnMatchStateChanged(ESTUMatchState NewState);
 };
