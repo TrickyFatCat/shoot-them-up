@@ -23,4 +23,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
     USTURespawnComponent* RespawnComponent = nullptr;
     virtual void OnPossess(APawn* InPawn) override;
+    virtual void SetupInputComponent() override;
+private:
+    void OnPauseGame();
 };

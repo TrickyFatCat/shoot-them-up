@@ -69,6 +69,18 @@ void ASTUGameModeBase::RespawnRequest(AController* Controller)
     ResetOnePlayer(Controller);
 }
 
+bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
+{
+    const bool bIsPaused = Super::SetPause(PC, CanUnpauseDelegate);
+
+    if (bIsPaused)
+    {
+        SetMatchState(ESTUMatchState::Pause);
+    }
+
+    return bIsPaused;
+}
+
 void ASTUGameModeBase::SpawnBots()
 {
     if (!GetWorld()) return;
@@ -220,7 +232,7 @@ void ASTUGameModeBase::GameOver()
             Pawn->DisableInput(nullptr);
         }
     }
-    
+
     UE_LOG(LogTemp, Display, TEXT("===== GAME OVER ====="));
     ShowPlayersStatistics();
     SetMatchState(ESTUMatchState::GameOver);
@@ -229,7 +241,7 @@ void ASTUGameModeBase::GameOver()
 void ASTUGameModeBase::SetMatchState(const ESTUMatchState NewState)
 {
     if (CurrentMatchState == NewState) return;
-    
+
     CurrentMatchState = NewState;
     OnMatchStateChanged.Broadcast(CurrentMatchState);
 }
