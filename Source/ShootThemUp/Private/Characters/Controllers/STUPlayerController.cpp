@@ -3,11 +3,23 @@
 
 #include "Characters/Controllers/STUPlayerController.h"
 #include "Components/STURespawnComponent.h"
-#include "GameFramework/GameModeBase.h"
+#include "STUGameModeBase.h"
 
 ASTUPlayerController::ASTUPlayerController()
 {
     RespawnComponent = CreateDefaultSubobject<USTURespawnComponent>("STURespawnComponent");
+}
+
+void ASTUPlayerController::BeginPlay()
+{
+    if (GetWorld())
+    {
+        ASTUGameModeBase* GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+        if (GameMode)
+        {
+            GameMode->OnMatchStateChanged.AddUObject(this, &ASTUPlayerController::OnMatchStateChanged);
+        }
+    }
 }
 
 void ASTUPlayerController::OnPossess(APawn* InPawn)
@@ -22,12 +34,39 @@ void ASTUPlayerController::SetupInputComponent()
 
     if (!InputComponent) return;
 
-    InputComponent->BindAction("PauseGame", IE_Pressed, this, &ASTUPlayerController::OnPauseGame);
+    FInputActionBinding& Pause = InputComponent->BindAction("PauseGame",
+                                                            IE_Pressed,
+                                                            this,
+                                                            &ASTUPlayerController::OnPauseGame);
+    Pause.bExecuteWhenPaused = true;
 }
 
 void ASTUPlayerController::OnPauseGame()
 {
-    if (!GetWorld() || !GetWorld()->GetAuthGameMode()) return;
+    if (!GetWorld()) return;
 
-    GetWorld()->GetAuthGameMode()->SetPause(this);
+    ASTUGameModeBase* GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+
+    if (!GameMode) return;
+
+    if (!GameMode->IsMatchPaused())
+    {
+        GameMode->SetPause(this);
+    }
+    else
+    {
+        GameMode->ClearPause();
+    }
+}
+
+void ASTUPlayerController::OnMatchStateChanged(ESTUMatchState NewState)
+{
+    if (NewState == ESTUMatchState::Progress)
+    {
+        bShowMouseCursor = false;
+    }
+    else
+    {
+        bShowMouseCursor = true;
+    }
 }

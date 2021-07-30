@@ -31,7 +31,9 @@ public:
 	FGameData GetGameData() const { return GameData; }
 	int32 GetCurrentRoundNum() const { return CurrentRound; }
 	int32 GetRoundSecondsRemaining() const { return RoundCountDown; }
-	virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate) override;
+	virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
+	virtual bool ClearPause() override;
+	bool IsMatchPaused() const { return CurrentMatchState == ESTUMatchState::Pause; }
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Game")
