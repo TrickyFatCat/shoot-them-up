@@ -94,3 +94,14 @@ struct FGameData
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     TArray<FLinearColor> TeamColors;
 };
+
+UENUM(BlueprintType)
+enum class ESTUMatchState : uint8
+{
+    Preparation = 0,
+    Progress,
+    Pause,
+    GameOver
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMatchStateChangedSignature, ESTUMatchState)

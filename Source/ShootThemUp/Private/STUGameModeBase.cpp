@@ -29,6 +29,7 @@ void ASTUGameModeBase::StartPlay()
     CreateTeams();
     CurrentRound = 1;
     StartRound();
+    SetMatchState(ESTUMatchState::Progress);
 }
 
 UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
@@ -222,4 +223,13 @@ void ASTUGameModeBase::GameOver()
     
     UE_LOG(LogTemp, Display, TEXT("===== GAME OVER ====="));
     ShowPlayersStatistics();
+    SetMatchState(ESTUMatchState::GameOver);
+}
+
+void ASTUGameModeBase::SetMatchState(const ESTUMatchState NewState)
+{
+    if (CurrentMatchState == NewState) return;
+    
+    CurrentMatchState = NewState;
+    OnMatchStateChanged.Broadcast(CurrentMatchState);
 }
