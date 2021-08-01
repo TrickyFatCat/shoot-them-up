@@ -32,10 +32,12 @@ public:
     UFUNCTION(BlueprintPure, Category="UI")
     bool IsPlayerSpectating() const;
 
-    virtual bool Initialize() override;
     UFUNCTION(BlueprintImplementableEvent, Category="UI")
     void OnTakeDamage();
 
+protected:
+    virtual void NativeOnInitialized() override;
+    
 private:
     void OnHealthChanged(const float Health, const float DeltaHealth);
     void OnShieldChanged(const float Shield, const float DeltaShield);

@@ -5,19 +5,15 @@
 #include "GameFramework/GameModeBase.h"
 #include "Components/Button.h"
 
-bool USTUPauseWidget::Initialize()
+void USTUPauseWidget::NativeOnInitialized()
 {
-    const bool InitStatus = Super::Initialize();
-
     if (ClearPauseButton)
     {
         ClearPauseButton->OnClicked.AddDynamic(this, &USTUPauseWidget::OnClearPause);
     }
-
-    return InitStatus;
 }
 
-void USTUPauseWidget::OnClearPause() 
+void USTUPauseWidget::OnClearPause()
 {
     if (!GetWorld() || !GetWorld()->GetAuthGameMode()) return;
 

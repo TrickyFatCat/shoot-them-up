@@ -59,7 +59,7 @@ bool USTUPlayerHudWidget::IsPlayerSpectating() const
     return Controller && Controller->GetStateName() == NAME_Spectating;
 }
 
-bool USTUPlayerHudWidget::Initialize()
+void USTUPlayerHudWidget::NativeOnInitialized()
 {
     if (GetOwningPlayer())
     {
@@ -74,7 +74,6 @@ bool USTUPlayerHudWidget::Initialize()
         HealthComponent->OnHealthChanged.AddUObject(this, &USTUPlayerHudWidget::OnHealthChanged);
         HealthComponent->OnShieldChanged.AddUObject(this, &USTUPlayerHudWidget::OnShieldChanged);
     }
-    return Super::Initialize();
 }
 
 void USTUPlayerHudWidget::OnHealthChanged(const float Health, const float DeltaHealth)
