@@ -12,6 +12,8 @@
 UCLASS()
 class SHOOTTHEMUP_API ASTUMenuPlayerController : public APlayerController
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
+protected:
+    virtual void BeginPlay() override;
 };

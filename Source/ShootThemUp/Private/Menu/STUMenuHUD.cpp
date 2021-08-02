@@ -3,3 +3,19 @@
 
 #include "Menu/STUMenuHUD.h"
 
+#include "Blueprint/UserWidget.h"
+
+void ASTUMenuHUD::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (MenuWidgetClass)
+    {
+        UUserWidget* MenuWidget = CreateWidget<UUserWidget>(GetWorld(), MenuWidgetClass);
+
+        if (MenuWidget)
+        {
+            MenuWidget->AddToViewport();
+        }
+    }
+}
