@@ -21,8 +21,14 @@ protected:
     
     UPROPERTY(meta=(BindWidget))
     UButton* ButtonStartGame = nullptr;
+    
+    UPROPERTY(meta=(BindWidget))
+    UButton* ButtonQuitGame = nullptr;
 
 private:
     UFUNCTION()
     void OnStartGame();
+
+    UFUNCTION()
+    void OnQuitGame();
 };
