@@ -24,7 +24,7 @@ void USTUMenuWidget::OnStartGame()
 
     if (!World) return;
 
-    USTUGameInstance* GameInstance = Cast<USTUGameInstance>(World->GetGameInstance());
+    USTUGameInstance* GameInstance = World->GetGameInstance<USTUGameInstance>();
 
     if (!GameInstance) return;
 
