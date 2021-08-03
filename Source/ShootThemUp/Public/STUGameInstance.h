@@ -24,7 +24,7 @@ public:
     TArray<FLevelData> GetLevelsData() const { return LevelsData; }
     
 protected:
-    UPROPERTY(EditDefaultsOnly, Category="Game")
+    UPROPERTY(EditDefaultsOnly, Category="Game", meta=(Tooltip="Level names must be usnique!"))
     TArray<FLevelData> LevelsData;
     UPROPERTY(EditDefaultsOnly, Category="Game")
     FName MenuLevelName = NAME_None;
