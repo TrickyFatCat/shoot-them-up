@@ -121,4 +121,4 @@ struct FLevelData
     UTexture2D* LevelPicture = nullptr;
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelSelectedSignature, const FLevelData)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelSelectedSignature, const FLevelData&)
