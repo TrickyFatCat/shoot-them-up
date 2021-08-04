@@ -23,6 +23,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="AI")
 	UBehaviorTree* BehaviorTreeAsset;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnDeath() override;
@@ -31,7 +33,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Component")
 	UWidgetComponent* HealthBarWidgetComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="AI")
+	float HealthWidgetVisibilityDistance = 1000.f;
 
 private:
 	void SetHealthBarPercent() const;
+	void UpdateHealthWidgetVisibility() const;
 };
