@@ -49,15 +49,16 @@ protected:
     // Health and damage
 public:
 protected:
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
+    USTUHealthComponent* HealthComponent = nullptr;
     UPROPERTY(EditDefaultsOnly, Category="Animation")
     UAnimMontage* DeathAnimMontage = nullptr;
     virtual void OnDeath();
+    virtual void OnHealthChanged(const float Health, const float DeltaHealth);
+    virtual void OnShieldChanged(const float Shield, const float DeltaShield);
+    USTUHealthComponent* GetHealthComponent() const { return HealthComponent; }
 private:
     const float DestroyTime = 5.f;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
-    USTUHealthComponent* HealthComponent = nullptr;
-    void OnHealthChanged(const float Health, const float DeltaHealth);
-    void OnShieldChanged(const float Shield, const float DeltaShield);
 
     // Landing damage
     UPROPERTY(EditDefaultsOnly, Category="Damage")
