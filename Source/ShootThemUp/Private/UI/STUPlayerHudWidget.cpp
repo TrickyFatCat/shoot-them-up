@@ -10,7 +10,7 @@
 
 float USTUPlayerHudWidget::GetNormalizedHealth() const
 {
-    USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(
+    const USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(
         GetOwningPlayerPawn());
 
     if (!HealthComponent) return 0.f;
@@ -64,7 +64,7 @@ bool USTUPlayerHudWidget::IsPlayerSpectating() const
 void USTUPlayerHudWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
-    
+
     if (GetOwningPlayer())
     {
         GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &USTUPlayerHudWidget::OnNewPawn);
@@ -107,14 +107,17 @@ void USTUPlayerHudWidget::OnNewPawn(APawn* Pawn)
         }
     }
 
-    // UpdateHealthBar();
+    // UpdateHealthBar();  // Do not uncomment right now. Must to figure out how to control creation sequence.
+    // Apparently, HUD creates earlier than Resource UObjects in HealthComponent as a result -> crash
 }
 
 void USTUPlayerHudWidget::UpdateHealthBar() const
 {
     if (ProgressBarHealth)
     {
-        const FLinearColor NewColor = GetNormalizedHealth() > HealthColorThreshold ? HealthColorNormal : HealthColorCritical;
+        const FLinearColor NewColor = GetNormalizedHealth() > HealthColorThreshold
+                                          ? HealthColorNormal
+                                          : HealthColorCritical;
         ProgressBarHealth->SetFillColorAndOpacity(NewColor);
     }
 }
