@@ -5,12 +5,6 @@
 #include "STUGameModeBase.h"
 #include "Characters/STUPlayerState.h"
 
-int32 USTUGameDataWidget::GetKills() const
-{
-    ASTUPlayerState* PlayerState = GetSTUPlayerState();
-    return PlayerState ? PlayerState->GetKillsNumber() : -1;
-}
-
 int32 USTUGameDataWidget::GetCurrentRoundNum() const
 {
     ASTUGameModeBase* GameMode = GetSTUGameMode();
