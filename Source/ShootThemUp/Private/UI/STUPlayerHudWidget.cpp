@@ -10,7 +10,7 @@
 
 float USTUPlayerHudWidget::GetNormalizedHealth() const
 {
-    const USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(
+    USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(
         GetOwningPlayerPawn());
 
     if (!HealthComponent) return 0.f;
@@ -63,18 +63,12 @@ bool USTUPlayerHudWidget::IsPlayerSpectating() const
 
 void USTUPlayerHudWidget::NativeOnInitialized()
 {
+    Super::NativeOnInitialized();
+    
     if (GetOwningPlayer())
     {
         GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &USTUPlayerHudWidget::OnNewPawn);
         OnNewPawn(GetOwningPlayerPawn());
-    }
-
-    USTUHealthComponent* HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
-
-    if (HealthComponent)
-    {
-        HealthComponent->OnHealthChanged.AddUObject(this, &USTUPlayerHudWidget::OnHealthChanged);
-        HealthComponent->OnShieldChanged.AddUObject(this, &USTUPlayerHudWidget::OnShieldChanged);
     }
 }
 
@@ -113,16 +107,15 @@ void USTUPlayerHudWidget::OnNewPawn(APawn* Pawn)
         }
     }
 
-    UpdateHealthBar();
+    // UpdateHealthBar();
 }
 
-void USTUPlayerHudWidget::UpdateHealthBar()
+void USTUPlayerHudWidget::UpdateHealthBar() const
 {
     if (ProgressBarHealth)
     {
-        ProgressBarHealth->SetFillColorAndOpacity(GetNormalizedHealth() > HealthColorThreshold
-                                                      ? HealthColorNormal
-                                                      : HealthColorCritical);
+        const FLinearColor NewColor = GetNormalizedHealth() > HealthColorThreshold ? HealthColorNormal : HealthColorCritical;
+        ProgressBarHealth->SetFillColorAndOpacity(NewColor);
     }
 }
 
