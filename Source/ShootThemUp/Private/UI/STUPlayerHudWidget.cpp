@@ -5,6 +5,8 @@
 #include "Components/STUHealthComponent.h"
 #include "Components/STUWeaponComponent.h"
 #include "STUUtils.h"
+#include "Components/ProgressBar.h"
+#include "Characters/STUPlayerState.h"
 
 float USTUPlayerHudWidget::GetNormalizedHealth() const
 {
@@ -82,6 +84,8 @@ void USTUPlayerHudWidget::OnHealthChanged(const float Health, const float DeltaH
     {
         OnTakeDamage();
     }
+
+    UpdateHealthBar();
 }
 
 void USTUPlayerHudWidget::OnShieldChanged(const float Shield, const float DeltaShield)
@@ -108,4 +112,26 @@ void USTUPlayerHudWidget::OnNewPawn(APawn* Pawn)
             HealthComponent->OnShieldChanged.AddUObject(this, &USTUPlayerHudWidget::OnShieldChanged);
         }
     }
+
+    UpdateHealthBar();
+}
+
+void USTUPlayerHudWidget::UpdateHealthBar()
+{
+    if (ProgressBarHealth)
+    {
+        ProgressBarHealth->SetFillColorAndOpacity(GetNormalizedHealth() > HealthColorThreshold
+                                                      ? HealthColorNormal
+                                                      : HealthColorCritical);
+    }
+}
+
+int32 USTUPlayerHudWidget::GetKills() const
+{
+    const APlayerController* PlayerController = GetOwningPlayer();
+
+    if (!PlayerController) return -1;
+
+    const ASTUPlayerState* PlayerState = Cast<ASTUPlayerState>(PlayerController->PlayerState);
+    return PlayerState ? PlayerState->GetKillsNumber() : -1;
 }

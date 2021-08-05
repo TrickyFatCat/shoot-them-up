@@ -9,6 +9,7 @@
 #include "STUPlayerHudWidget.generated.h"
 
 class USTUHealthComponent;
+class UProgressBar;
 
 /**
  * 
@@ -36,10 +37,21 @@ public:
     void OnTakeDamage();
 
 protected:
+    UPROPERTY(meta=(BindWidget))
+    UProgressBar* ProgressBarHealth = nullptr;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+    float HealthColorThreshold = 0.25f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+    FLinearColor HealthColorNormal = FLinearColor::Green;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+    FLinearColor HealthColorCritical = FLinearColor::Red;
     virtual void NativeOnInitialized() override;
-    
+
 private:
     void OnHealthChanged(const float Health, const float DeltaHealth);
     void OnShieldChanged(const float Shield, const float DeltaShield);
     void OnNewPawn(APawn* Pawn);
+    void UpdateHealthBar();
+    UFUNCTION(BlueprintCallable, Category="UI")
+    int32 GetKills() const;
 };
