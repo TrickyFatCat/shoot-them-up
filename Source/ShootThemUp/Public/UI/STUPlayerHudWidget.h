@@ -52,6 +52,6 @@ private:
     void OnShieldChanged(const float Shield, const float DeltaShield);
     void OnNewPawn(APawn* Pawn);
     void UpdateHealthBar() const;
-    UFUNCTION(BlueprintCallable, Category="UI")
+    UFUNCTION(BlueprintPure, Category="UI")
     int32 GetKills() const;
 };
