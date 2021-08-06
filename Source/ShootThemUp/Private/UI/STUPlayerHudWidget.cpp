@@ -107,6 +107,7 @@ void USTUPlayerHudWidget::OnNewPawn(APawn* Pawn)
         }
     }
 
+    ProgressBarHealth->SetFillColorAndOpacity(HealthColorNormal); // It's a hack, but it works
     // UpdateHealthBar();  // Do not uncomment right now. Must to figure out how to control creation sequence.
     // Apparently, HUD creates earlier than Resource UObjects in HealthComponent as a result -> crash
 }
