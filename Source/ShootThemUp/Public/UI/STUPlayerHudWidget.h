@@ -54,4 +54,8 @@ private:
     void UpdateHealthBar() const;
     UFUNCTION(BlueprintPure, Category="UI")
     int32 GetKills() const;
+    
+    const TCHAR PrefixSymbol = '0';
+    UFUNCTION(BlueprintCallable, Category="UI")
+    FString FormatAmmoNumber(const int32 BulletsNumber, const int32 MaxLen = 3) const;
 };

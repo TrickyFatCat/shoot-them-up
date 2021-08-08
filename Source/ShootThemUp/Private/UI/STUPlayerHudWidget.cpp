@@ -132,3 +132,16 @@ int32 USTUPlayerHudWidget::GetKills() const
     const ASTUPlayerState* PlayerState = Cast<ASTUPlayerState>(PlayerController->PlayerState);
     return PlayerState ? PlayerState->GetKillsNumber() : -1;
 }
+
+FString USTUPlayerHudWidget::FormatAmmoNumber(const int32 BulletsNumber, const int32 MaxLen) const
+{
+    FString BulletsString = FString::FromInt(BulletsNumber);
+    const int32 AddSymbolNumber = MaxLen - BulletsString.Len();
+
+    if (AddSymbolNumber > 0)
+    {
+        BulletsString = FString::ChrN(AddSymbolNumber, PrefixSymbol).Append(BulletsString);
+    }
+
+    return BulletsString;
+}
