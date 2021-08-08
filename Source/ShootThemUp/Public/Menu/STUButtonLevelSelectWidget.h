@@ -45,4 +45,10 @@ private:
 
     UFUNCTION()
     void OnSelectButtonClicked();
+
+    UFUNCTION()
+    void OnSelectButtonHovered();
+
+    UFUNCTION()
+    void OnSelectButtonUnhovered();
 };

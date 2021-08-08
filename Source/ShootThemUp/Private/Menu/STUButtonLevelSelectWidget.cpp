@@ -13,6 +13,8 @@ void USTUButtonLevelSelectWidget::NativeOnInitialized()
     if (ButtonSelectLevel)
     {
         ButtonSelectLevel->OnClicked.AddDynamic(this, &USTUButtonLevelSelectWidget::OnSelectButtonClicked);
+        ButtonSelectLevel->OnHovered.AddDynamic(this, &USTUButtonLevelSelectWidget::OnSelectButtonHovered);
+        ButtonSelectLevel->OnUnhovered.AddDynamic(this, &USTUButtonLevelSelectWidget::OnSelectButtonUnhovered);
     }
 }
 
@@ -29,18 +31,33 @@ void USTUButtonLevelSelectWidget::SetLevelData(const FLevelData& Data)
     {
         ImageLevelPicture->SetBrushFromTexture(Data.LevelPicture);
     }
-
 }
 
 void USTUButtonLevelSelectWidget::SetSelected(bool bIsSelected)
 {
-    if (ImageFrame)
+    if (ImageLevelPicture)
     {
-        ImageFrame->SetVisibility(bIsSelected ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+        ImageLevelPicture->SetColorAndOpacity(bIsSelected ? FLinearColor::Red : FLinearColor::White);
     }
 }
 
 void USTUButtonLevelSelectWidget::OnSelectButtonClicked()
 {
     OnLevelSelected.Broadcast(LevelData);
+}
+
+void USTUButtonLevelSelectWidget::OnSelectButtonHovered()
+{
+    if (ImageFrame)
+    {
+        ImageFrame->SetVisibility(ESlateVisibility::Visible);
+    }
+}
+
+void USTUButtonLevelSelectWidget::OnSelectButtonUnhovered()
+{
+    if (ImageFrame)
+    {
+        ImageFrame->SetVisibility(ESlateVisibility::Hidden);
+    }
 }
