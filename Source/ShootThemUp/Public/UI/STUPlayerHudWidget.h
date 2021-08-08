@@ -39,6 +39,8 @@ public:
 protected:
     UPROPERTY(meta=(BindWidget))
     UProgressBar* ProgressBarHealth = nullptr;
+    UPROPERTY(Transient, meta=(BindWidgetAnim))
+    UWidgetAnimation* DamageAnimation = nullptr;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
     float HealthColorThreshold = 0.25f;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")

@@ -77,6 +77,11 @@ void USTUPlayerHudWidget::OnHealthChanged(const float Health, const float DeltaH
     if (DeltaHealth < 0)
     {
         OnTakeDamage();
+
+        if (!IsAnimationPlaying(DamageAnimation))
+        {
+            PlayAnimation(DamageAnimation);
+        }
     }
 
     UpdateHealthBar();
@@ -87,6 +92,11 @@ void USTUPlayerHudWidget::OnShieldChanged(const float Shield, const float DeltaS
     if (DeltaShield < 0)
     {
         OnTakeDamage();
+        
+        if (!IsAnimationPlaying(DamageAnimation))
+        {
+            PlayAnimation(DamageAnimation);
+        }
     }
 }
 
