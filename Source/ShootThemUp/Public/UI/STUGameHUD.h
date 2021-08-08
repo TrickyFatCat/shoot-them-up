@@ -1,4 +1,3 @@
-// A simple Shoot Them Up game made during UE4 C++ course. All rights reserved.
 
 #pragma once
 
@@ -6,6 +5,8 @@
 #include "GameFramework/HUD.h"
 #include "STUCoreTypes.h"
 #include "STUGameHUD.generated.h"
+
+class USTUBaseWidget;
 
 /**
  * 
@@ -27,8 +28,8 @@ protected:
     TSubclassOf<UUserWidget> GameOverWidgetClass;
 private:
     UPROPERTY()
-    TMap<ESTUMatchState, UUserWidget*> GameWidgets;
+    TMap<ESTUMatchState, USTUBaseWidget*> GameWidgets;
     UPROPERTY()
-    UUserWidget* CurrentWidget = nullptr;
+    USTUBaseWidget* CurrentWidget = nullptr;
     void OnMatchStateChanged(ESTUMatchState NewState);
 };

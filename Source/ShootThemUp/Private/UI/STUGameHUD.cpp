@@ -2,7 +2,7 @@
 
 
 #include "UI/STUGameHUD.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/STUBaseWidget.h"
 #include "STUGameModeBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUGameHUD, All, All);
@@ -15,13 +15,13 @@ void ASTUGameHUD::BeginPlay()
 {
     Super::BeginPlay();
 
-    GameWidgets.Add(ESTUMatchState::Progress, CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidgetClass));
-    GameWidgets.Add(ESTUMatchState::Pause, CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass));
-    GameWidgets.Add(ESTUMatchState::GameOver, CreateWidget<UUserWidget>(GetWorld(), GameOverWidgetClass));
+    GameWidgets.Add(ESTUMatchState::Progress, CreateWidget<USTUBaseWidget>(GetWorld(), PlayerHUDWidgetClass));
+    GameWidgets.Add(ESTUMatchState::Pause, CreateWidget<USTUBaseWidget>(GetWorld(), PauseWidgetClass));
+    GameWidgets.Add(ESTUMatchState::GameOver, CreateWidget<USTUBaseWidget>(GetWorld(), GameOverWidgetClass));
 
     for (const auto GameWidgetPair : GameWidgets)
     {
-        UUserWidget* GameWidget = GameWidgetPair.Value;
+        USTUBaseWidget* GameWidget = GameWidgetPair.Value;
 
         if (!GameWidget) continue;
 
@@ -54,6 +54,8 @@ void ASTUGameHUD::OnMatchStateChanged(ESTUMatchState NewState)
     if (CurrentWidget)
     {
         CurrentWidget->SetVisibility(ESlateVisibility::Visible);
+        CurrentWidget->Show();
     }
+    
     UE_LOG(LogSTUGameHUD, Display, TEXT("Match state was changed: %s"), *UEnum::GetValueAsString(NewState));
 }
