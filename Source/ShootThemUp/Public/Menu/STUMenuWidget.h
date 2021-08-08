@@ -35,6 +35,11 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
     TSubclassOf<UUserWidget> SelectButtonWidgetClass;
 
+    UPROPERTY(Transient, meta=(BindWidgetAnim))
+    UWidgetAnimation* HideAnimation = nullptr;
+
+    virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
+
 private:
     UPROPERTY()
     TArray<USTUButtonLevelSelectWidget*>  LevelSelectButtons;

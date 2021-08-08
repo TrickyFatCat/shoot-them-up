@@ -29,13 +29,20 @@ void USTUMenuWidget::NativeOnInitialized()
     InitLevelSelectButtons();
 }
 
-void USTUMenuWidget::OnStartGame()
+void USTUMenuWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
 {
+    if (Animation != HideAnimation) return;
+    
     USTUGameInstance* GameInstance = GetGameInstance();
 
     if (!GameInstance) return;
 
     UGameplayStatics::OpenLevel(this, GameInstance->GetStartLevelData().LevelName);
+}
+
+void USTUMenuWidget::OnStartGame()
+{
+    PlayAnimation(HideAnimation);
 }
 
 void USTUMenuWidget::OnQuitGame()
@@ -88,7 +95,7 @@ void USTUMenuWidget::OnLevelSelected(const FLevelData& Data)
 
     GameInstance->SetStartLevelData(Data);
 
-    for(auto LevelButton : LevelSelectButtons)
+    for (auto LevelButton : LevelSelectButtons)
     {
         if (LevelButton)
         {
