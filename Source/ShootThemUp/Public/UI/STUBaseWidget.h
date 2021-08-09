@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "STUBaseWidget.generated.h"
 
+class USoundCue;
+
 /**
  * 
  */
@@ -20,4 +22,7 @@ public:
 protected:
     UPROPERTY(Transient, meta=(BindWidgetAnim))
     UWidgetAnimation* ShowAnimation = nullptr;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Sound")
+    USoundCue* OpenSound;
 };

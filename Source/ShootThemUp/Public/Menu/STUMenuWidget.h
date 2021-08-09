@@ -11,6 +11,7 @@ class UButton;
 class UHorizontalBox;
 class USTUGameInstance;
 class USTUButtonLevelSelectWidget;
+class USoundCue;
 
 /**
  * 
@@ -53,4 +54,8 @@ private:
     void InitLevelSelectButtons();
     void OnLevelSelected(const FLevelData& Data);
     USTUGameInstance* GetGameInstance() const;
+
+    // Sounds
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Sound", meta=(AllowPrivateAccess="true"))
+    USoundCue* StartGameSound = nullptr;
 };
