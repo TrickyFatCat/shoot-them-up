@@ -33,7 +33,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Health")
     float GetNormalizedHealth() const { return HealthObject->GetNormalizedValue(); }
     UFUNCTION(BlueprintCallable, Category="Health")
-    void DecreaseHealth(const float DeltaHealth, AController* DecreasedBy);
+    void DecreaseHealth(const float DeltaHealth, AController* InstigatorController);
     UFUNCTION(BlueprintCallable, Category="Health")
     bool IncreaseHealth(const float DeltaHealth, const bool bClampToMax);
     UFUNCTION(BlueprintPure)
@@ -57,7 +57,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Shield")
     float GetNormalizedShield() const { return ShieldObject->GetNormalizedValue(); }
     UFUNCTION(BlueprintCallable, Category="Shield")
-    void DecreaseShield(const float DeltaShield);
+    void DecreaseShield(const float DeltaShield, AController* InstigatorController);
     FOnShieldChanged OnShieldChanged;
     void BroadcastOnShieldChanged(const float CurrentShield, const float DeltaShield);
 

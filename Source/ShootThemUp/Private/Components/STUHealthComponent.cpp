@@ -8,13 +8,13 @@
 #include "Camera/CameraShake.h"
 #include "Objects/Resource.h"
 #include "STUGameModeBase.h"
+#include "STUUtils.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All, All)
 
 USTUHealthComponent::USTUHealthComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
-
 }
 
 void USTUHealthComponent::BeginPlay()
@@ -34,19 +34,26 @@ void USTUHealthComponent::BeginPlay()
     {
         ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
     }
-
 }
 
-void USTUHealthComponent::DecreaseHealth(const float DeltaHealth, AController* DecreasedBy)
+void USTUHealthComponent::DecreaseHealth(const float DeltaHealth, AController* InstigatorController)
 {
+    if (InstigatorController)
+    {
+        const bool bIsInstigatorEnemey =
+            STUUtils::AreEnemies(GetOwner()->GetInstigatorController(), InstigatorController);
+
+        if (!bIsInstigatorEnemey) return;
+    }
+
     if (DeltaHealth <= 0.f || GetHealth() <= 0.f) return;
-    
+
     HealthObject->DecreaseValue(DeltaHealth);
 
     if (GetIsDead())
     {
         ShieldObject->SetAutoIncreaseEnabled(false);
-        RegisterKill(DecreasedBy);
+        RegisterKill(InstigatorController);
         OnDeath.Broadcast();
     }
 }
@@ -65,10 +72,18 @@ void USTUHealthComponent::BroadcastOnHealthChanged(const float CurrentHealth, co
     OnHealthChanged.Broadcast(CurrentHealth, DeltaHealth);
 }
 
-void USTUHealthComponent::DecreaseShield(const float DeltaShield)
+void USTUHealthComponent::DecreaseShield(const float DeltaShield, AController* InstigatorController)
 {
-    if (DeltaShield <= 0.f || GetShield()<= 0.f) return;
-    
+    if (InstigatorController)
+    {
+        const bool bIsInstigatorEnemey =
+            STUUtils::AreEnemies(GetOwner()->GetInstigatorController(), InstigatorController);
+
+        if (!bIsInstigatorEnemey) return;
+    }
+
+    if (DeltaShield <= 0.f || GetShield() <= 0.f) return;
+
     ShieldObject->DecreaseValue(DeltaShield);
 }
 
@@ -81,12 +96,12 @@ void USTUHealthComponent::BroadcastOnShieldChanged(const float CurrentShield, co
 void USTUHealthComponent::PlayCameraShake() const
 {
     if (!DamageCameraShake) return;
-    
+
     APawn* Player = Cast<APawn>(GetOwner());
 
     if (!Player) return;
 
-    APlayerController* Controller = Player -> GetController<APlayerController>();
+    APlayerController* Controller = Player->GetController<APlayerController>();
 
     if (!Controller || !Controller->PlayerCameraManager) return;
 
@@ -113,12 +128,12 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
     {
         if (CurrentShield >= Damage)
         {
-            DecreaseShield(Damage);
+            DecreaseShield(Damage, InstigatedBy);
         }
         else
         {
             Damage -= CurrentShield;
-            DecreaseShield(CurrentShield);
+            DecreaseShield(CurrentShield, InstigatedBy);
             DecreaseHealth(Damage, InstigatedBy);
         }
     }
@@ -129,7 +144,7 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
 void USTUHealthComponent::RegisterKill(AController* KillerController)
 {
     if (!GetWorld()) return;
-    
+
     ASTUGameModeBase* GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
 
     if (!GameMode) return;
