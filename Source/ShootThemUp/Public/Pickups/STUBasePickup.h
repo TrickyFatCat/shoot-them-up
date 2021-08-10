@@ -8,6 +8,7 @@
 #include "STUBasePickup.generated.h"
 
 class USphereComponent;
+class USoundCue;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBasePickup : public AActor
@@ -31,6 +32,8 @@ protected:
     USphereComponent* CollisionComponent = nullptr;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Pickup")
     float RespawnTime = 5.f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Sound")
+    USoundCue* PickupSound = nullptr;
 
     virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
     virtual bool ActivateEffect(APawn* PlayerPawn);

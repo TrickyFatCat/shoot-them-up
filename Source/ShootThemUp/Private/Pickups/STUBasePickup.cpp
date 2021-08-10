@@ -2,9 +2,9 @@
 
 
 #include "Pickups/STUBasePickup.h"
-
-#include "Animation/AnimInstanceProxy.h"
 #include "Components/SphereComponent.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBasePickup, All, All);
 
@@ -55,6 +55,7 @@ void ASTUBasePickup::Hide()
 
     if (!GetRootComponent()) return;
 
+    UGameplayStatics::PlaySoundAtLocation(GetWorld(), PickupSound, GetActorLocation());
     GetRootComponent()->SetVisibility(false, true);
     FTimerHandle RespawnTimerHandle;
     GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnTime);
