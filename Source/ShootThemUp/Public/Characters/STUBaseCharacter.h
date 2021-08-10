@@ -9,6 +9,7 @@
 class USTUHealthComponent;
 class ASTUBaseWeapon;
 class USTUWeaponComponent;
+class USoundCue;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -23,6 +24,11 @@ protected:
 
 public:
     virtual void Tick(float DeltaTime) override;
+
+    // Sounds
+protected:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Sound")
+    USoundCue* DeathSound = nullptr;
 
     // Materials
 public:

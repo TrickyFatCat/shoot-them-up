@@ -9,6 +9,7 @@
 class USTUWeaponFXComponent;
 class UNiagaraComponent;
 class UNiagaraSystem;
+class UAudioComponent;
 
 /**
  * 
@@ -40,6 +41,9 @@ protected:
     virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const override;
 
 private:
+    UPROPERTY()
+    UAudioComponent* ShootAudioComponent = nullptr;
+    
     UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetRateOfFire, BlueprintSetter=SetRateOfFire)
     float RateOfFire = 8.f;
     FTimerHandle ShotTimerHandle;
@@ -48,8 +52,8 @@ private:
 
     UPROPERTY()
     UNiagaraComponent* MuzzleFXComponent;
-    void InitMuzzleFX();
-    void SetMuzzleFXVisibility(const bool bIsVisible);
+    void InitFX();
+    void SetFXActive(const bool bIsActive);
 
     void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
 

@@ -12,6 +12,7 @@ class USkeletalMeshComponent;
 class APlayerController;
 class UNiagaraSystem;
 class UNiagaraComponent;
+class USoundCue;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
@@ -37,20 +38,30 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Component", meta=(AllowPrivateAccess="true"))
     USkeletalMeshComponent* WeaponMesh = nullptr;
+    
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     FName MuzzleSocketName = "MuzzleSocket";
+    
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
     float MaxTraceDistance = 5000.f;
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     float DamageAmount = 10.f;
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     float BulletSpread = 6.f;
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     FAmmoData WeaponAmmo{20, 20, 100, 100, false};
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     FWeaponUIData WeaponUIData;
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
     UNiagaraSystem* MuzzleFX;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Sound")
+    USoundCue* ShootSound = nullptr;
 
     UNiagaraComponent* SpawnMuzzleFX();
 
