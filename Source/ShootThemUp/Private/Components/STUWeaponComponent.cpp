@@ -22,8 +22,6 @@ void USTUWeaponComponent::StartFire()
 {
     if (!CanFire()) return;
 
-    if (CurrentWeapon->IsEmpty()) return;
-    
     CurrentWeapon->StartFire();
 }
 
