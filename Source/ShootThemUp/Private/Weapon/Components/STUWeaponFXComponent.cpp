@@ -7,6 +7,7 @@
 #include "STUCoreTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/DecalComponent.h"
+#include "Sound/SoundCue.h"
 
 
 USTUWeaponFXComponent::USTUWeaponFXComponent()
@@ -42,18 +43,22 @@ void USTUWeaponFXComponent::PlayImpactFX(const FHitResult& Hit)
         }
     }
 
+    UWorld* World = GetWorld();
+
     // Spawn niagara
-    UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
+    UNiagaraFunctionLibrary::SpawnSystemAtLocation(World,
                                                    ImpactData.NiagaraEffect,
                                                    Hit.ImpactPoint,
                                                    Hit.ImpactNormal.Rotation());
 
     // Spawn decal
-    UDecalComponent* DecalComponent = UGameplayStatics::SpawnDecalAtLocation(GetWorld(),
+    UDecalComponent* DecalComponent = UGameplayStatics::SpawnDecalAtLocation(World,
                                                                              ImpactData.DecalData.Material,
                                                                              ImpactData.DecalData.Size,
                                                                              Hit.ImpactPoint,
                                                                              Hit.ImpactNormal.Rotation());
+
+    UGameplayStatics::PlaySoundAtLocation(World, ImpactData.ImpactSound, GetOwner()->GetActorLocation());
 
     if (DecalComponent)
     {
