@@ -69,4 +69,6 @@ private:
 	void GameOver();
 
 	void SetMatchState(const ESTUMatchState NewState);
+
+	void StopAllShooting();
 };

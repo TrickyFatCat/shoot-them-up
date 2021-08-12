@@ -19,6 +19,9 @@ class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 public:
     ASTUBaseCharacter(const FObjectInitializer& ObjInit);
 
+    virtual void TurnOff() override;
+    virtual void Reset() override;
+
 protected:
     virtual void BeginPlay() override;
 

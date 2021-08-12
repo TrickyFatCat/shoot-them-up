@@ -10,6 +10,7 @@
 #include "Characters/STUPlayerState.h"
 #include "STUUtils.h"
 #include "Components/STURespawnComponent.h"
+#include "Components/STUWeaponComponent.h"
 #include "EngineUtils.h"
 
 constexpr static int32 MinRoundTimeForRespawn = 10; // In seconds
@@ -75,6 +76,7 @@ bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDel
 
     if (bIsPaused)
     {
+        StopAllShooting();
         SetMatchState(ESTUMatchState::Pause);
     }
 
@@ -255,4 +257,17 @@ void ASTUGameModeBase::SetMatchState(const ESTUMatchState NewState)
 
     CurrentMatchState = NewState;
     OnMatchStateChanged.Broadcast(CurrentMatchState);
+}
+
+void ASTUGameModeBase::StopAllShooting()
+{
+    for (auto Pawn : TActorRange<APawn>(GetWorld()))
+    {
+        USTUWeaponComponent* WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(Pawn);
+
+        if (!WeaponComponent) continue;
+
+        WeaponComponent->StopFire();
+        WeaponComponent->SetZoom(false);
+    }
 }
