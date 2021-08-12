@@ -40,6 +40,8 @@ protected:
     FString TraceTargetName = "TraceTarget";
     UPROPERTY(EditDefaultsOnly, Category="Weapon")
     float CameraFOVZoom = 50.f;
+    UPROPERTY(EditDefaultsOnly, Category="Weapon")
+    float BulletSpreadZoom = 2.f;
     virtual void BeginPlay() override;
     virtual void MakeShot() override;
     virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const override;
@@ -64,4 +66,5 @@ private:
     AController* GetController() const;
 
     float CameraFOVDefault = 90.f;
+    float BulletSpreadDefault = BulletSpread;
 };

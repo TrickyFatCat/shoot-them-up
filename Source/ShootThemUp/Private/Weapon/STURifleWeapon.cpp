@@ -107,9 +107,11 @@ void ASTURifleWeapon::SetZoom(const bool bIsEnabled)
     if (bIsEnabled)
     {
         CameraFOVDefault = PlayerCameraManager->GetFOVAngle();
+        BulletSpreadDefault = BulletSpread;
     }
 
     PlayerCameraManager->SetFOV(bIsEnabled ? CameraFOVZoom : CameraFOVDefault);
+    BulletSpread = bIsEnabled ? BulletSpreadZoom : BulletSpreadDefault;
 }
 
 void ASTURifleWeapon::DealDamage(const FHitResult& HitResult)
