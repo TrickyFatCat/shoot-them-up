@@ -120,4 +120,6 @@ private:
     void CalculateAndApplyDamage(float Damage, AController* InstigatedBy);
     
     float GetPointDamageModifier(AActor* DamagedActor, const FName& BoneName);
+
+    void ReportDamageEvent(const float Damage, AController* InstigatedBy) const;
 };

@@ -6,13 +6,21 @@
 #include "STUUtils.h"
 #include "Components/STUHealthComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Perception/AISense_Damage.h"
 
 AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
 {
     TArray<AActor*> PerceivedActors;
     GetCurrentlyPerceivedActors(UAISense_Sight::StaticClass(), PerceivedActors);
 
-    if (PerceivedActors.Num() == 0) return nullptr;
+    if (PerceivedActors.Num() == 0)
+    {
+        GetCurrentlyPerceivedActors(UAISense_Damage::StaticClass(), PerceivedActors);
+
+        if (PerceivedActors.Num() == 0) return nullptr;
+
+        
+    }
 
     AAIController* Controller = Cast<AAIController>(GetOwner());
 
@@ -31,7 +39,7 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
         APawn* PerceivedPawn = Cast<APawn>(PerceivedActor);
         const bool AreEnemies = PerceivedActor && STUUtils::AreEnemies(Controller, PerceivedPawn->Controller);
 
-        if (HealthComponent && !HealthComponent->GetIsDead() && AreEnemies) 
+        if (HealthComponent && !HealthComponent->GetIsDead() && AreEnemies)
         {
             const float CurrentDistance = (PerceivedActor->GetActorLocation() - Pawn->GetActorLocation()).Size();
 

@@ -9,6 +9,7 @@
 #include "Objects/Resource.h"
 #include "STUGameModeBase.h"
 #include "STUUtils.h"
+#include "Perception/AISense_Damage.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All, All)
 
@@ -160,6 +161,7 @@ void USTUHealthComponent::CalculateAndApplyDamage(float Damage, AController* Ins
 {
     if (Damage <= 0.f || GetIsDead()) return;
 
+    const float InitialDamage = Damage;
     const float CurrentShield = GetShield();
 
     if (CurrentShield <= 0.f)
@@ -183,6 +185,7 @@ void USTUHealthComponent::CalculateAndApplyDamage(float Damage, AController* Ins
     }
 
     PlayCameraShake();
+    ReportDamageEvent(InitialDamage, InstigatedBy);
 }
 
 float USTUHealthComponent::GetPointDamageModifier(AActor* DamagedActor, const FName& BoneName)
@@ -196,4 +199,15 @@ float USTUHealthComponent::GetPointDamageModifier(AActor* DamagedActor, const FN
     if (!DamageModifiers.Contains(PhysMat)) return 1.f;
 
     return DamageModifiers[PhysMat];
+}
+
+void USTUHealthComponent::ReportDamageEvent(const float Damage, AController* InstigatedBy) const
+{
+    if (!InstigatedBy || !InstigatedBy->GetPawn() || !GetOwner()) return;
+    UAISense_Damage::ReportDamageEvent(GetWorld(),
+                                       GetOwner(),
+                                       InstigatedBy->GetPawn(),
+                                       Damage,
+                                       InstigatedBy->GetPawn()->GetActorLocation(),
+                                       GetOwner()->GetActorLocation());
 }
