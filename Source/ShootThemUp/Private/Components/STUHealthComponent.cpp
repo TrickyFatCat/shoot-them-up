@@ -2,8 +2,8 @@
 
 
 #include "Components/STUHealthComponent.h"
-#include "GameFramework/Actor.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraShake.h"
 #include "Objects/Resource.h"
@@ -33,6 +33,8 @@ void USTUHealthComponent::BeginPlay()
     if (ComponentOwner)
     {
         ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
+        ComponentOwner->OnTakePointDamage.AddDynamic(this, &USTUHealthComponent::OnTakePointDamage);
+        ComponentOwner->OnTakeRadialDamage.AddDynamic(this, &USTUHealthComponent::OnTakeRadialDamage);
     }
 }
 
@@ -114,6 +116,48 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
                                           class AController* InstigatedBy,
                                           AActor* DamageCauser)
 {
+}
+
+void USTUHealthComponent::OnTakePointDamage(AActor* DamagedActor,
+                                            float Damage,
+                                            AController* InstigatedBy,
+                                            FVector HitLocation,
+                                            UPrimitiveComponent* FHitComponent,
+                                            FName BoneName,
+                                            FVector ShotFromDirection,
+                                            const UDamageType* DamageType,
+                                            AActor* DamageCauser)
+{
+    Damage *= GetPointDamageModifier(DamagedActor, BoneName);
+    CalculateAndApplyDamage(Damage, InstigatedBy);
+}
+
+void USTUHealthComponent::OnTakeRadialDamage(AActor* DamagedActor,
+                                             float Damage,
+                                             const UDamageType* DamageType,
+                                             FVector Origin,
+                                             FHitResult HitInfo,
+                                             AController* InstigatedBy,
+                                             AActor* DamageCauser)
+{
+    CalculateAndApplyDamage(Damage, InstigatedBy);
+}
+
+void USTUHealthComponent::RegisterKill(AController* KillerController)
+{
+    if (!GetWorld()) return;
+
+    ASTUGameModeBase* GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+
+    if (!GameMode) return;
+
+    APawn* VictimPawn = Cast<APawn>(GetOwner());
+    AController* VictimController = VictimPawn ? VictimPawn->Controller : nullptr;
+    GameMode->RegisterKill(KillerController, VictimController);
+}
+
+void USTUHealthComponent::CalculateAndApplyDamage(float Damage, AController* InstigatedBy)
+{
     if (Damage <= 0.f || GetIsDead()) return;
 
     const float CurrentShield = GetShield();
@@ -141,15 +185,15 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamageActor,
     PlayCameraShake();
 }
 
-void USTUHealthComponent::RegisterKill(AController* KillerController)
+float USTUHealthComponent::GetPointDamageModifier(AActor* DamagedActor, const FName& BoneName)
 {
-    if (!GetWorld()) return;
+    ACharacter* Character = Cast<ACharacter>(DamagedActor);
 
-    ASTUGameModeBase* GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+    if (!Character || !Character->GetMesh() || !Character->GetMesh()->GetBodyInstance(BoneName)) return 1.f;
 
-    if (!GameMode) return;
+    UPhysicalMaterial* PhysMat = Character->GetMesh()->GetBodyInstance(BoneName)->GetSimplePhysicalMaterial();
 
-    APawn* VictimPawn = Cast<APawn>(GetOwner());
-    AController* VictimController = VictimPawn ? VictimPawn->Controller : nullptr;
-    GameMode->RegisterKill(KillerController, VictimController);
+    if (!DamageModifiers.Contains(PhysMat)) return 1.f;
+
+    return DamageModifiers[PhysMat];
 }
