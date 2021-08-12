@@ -28,6 +28,8 @@ public:
 
     UFUNCTION(BlueprintSetter)
     void SetRateOfFire(const float NewRate);
+    
+    virtual void SetZoom(const bool bIsEnabled) override;
 
 protected:
     UPROPERTY(VisibleAnywhere, Category="VFX");
@@ -36,6 +38,8 @@ protected:
     UNiagaraSystem* TraceFX = nullptr;
     UPROPERTY(EditDefaultsOnly, Category="VFX")
     FString TraceTargetName = "TraceTarget";
+    UPROPERTY(EditDefaultsOnly, Category="Weapon")
+    float CameraFOVZoom = 50.f;
     virtual void BeginPlay() override;
     virtual void MakeShot() override;
     virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const override;
@@ -58,4 +62,6 @@ private:
     void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
 
     AController* GetController() const;
+
+    float CameraFOVDefault = 90.f;
 };

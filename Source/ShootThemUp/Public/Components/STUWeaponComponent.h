@@ -29,6 +29,7 @@ public:
     bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
     bool IncreaseWeaponAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, int32 Amount);
     bool IsAmmoNeeded(TSubclassOf<ASTUBaseWeapon> WeaponType);
+    void SetZoom(const bool bIsEnabled);
 
 protected:
     virtual void BeginPlay() override;

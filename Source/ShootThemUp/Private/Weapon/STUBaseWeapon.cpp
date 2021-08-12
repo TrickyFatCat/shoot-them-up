@@ -27,6 +27,10 @@ void ASTUBaseWeapon::StopFire()
 {
 }
 
+void ASTUBaseWeapon::SetZoom(const bool bIsEnabled)
+{
+}
+
 void ASTUBaseWeapon::BeginPlay()
 {
     Super::BeginPlay();

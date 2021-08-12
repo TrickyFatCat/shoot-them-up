@@ -33,6 +33,8 @@ public:
     FAmmoData GetAmmoData() const { return WeaponAmmo; }
     FOnClipEmptySignature OnClipEmpty;
 
+    virtual void SetZoom(const bool bIsEnabled);
+
 protected:
     virtual void BeginPlay() override;
 

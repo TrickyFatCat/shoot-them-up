@@ -56,6 +56,17 @@ void ASTUPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
                                      WeaponComponent,
                                      &USTUWeaponComponent::EquipPreviousWeapon);
     PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Reload);
+
+    PlayerInputComponent->BindAction<FZoomInputSignature>("Zoom",
+                                                          IE_Pressed,
+                                                          WeaponComponent,
+                                                          &USTUWeaponComponent::SetZoom,
+                                                          true);
+    PlayerInputComponent->BindAction<FZoomInputSignature>("Zoom",
+                                                          IE_Released,
+                                                          WeaponComponent,
+                                                          &USTUWeaponComponent::SetZoom,
+                                                          false);
 }
 
 void ASTUPlayerCharacter::BeginPlay()

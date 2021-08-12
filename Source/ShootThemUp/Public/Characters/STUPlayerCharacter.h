@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class USphereComponent;
 
+DECLARE_DELEGATE_OneParam(FZoomInputSignature, bool)
 /**
  * 
  */

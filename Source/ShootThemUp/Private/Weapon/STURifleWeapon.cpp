@@ -94,6 +94,24 @@ bool ASTURifleWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     return true;
 }
 
+void ASTURifleWeapon::SetZoom(const bool bIsEnabled)
+{
+    APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+    if (!PlayerController) return;
+
+    APlayerCameraManager* PlayerCameraManager = PlayerController->PlayerCameraManager;
+
+    if (!PlayerCameraManager) return;
+
+    if (bIsEnabled)
+    {
+        CameraFOVDefault = PlayerCameraManager->GetFOVAngle();
+    }
+
+    PlayerCameraManager->SetFOV(bIsEnabled ? CameraFOVZoom : CameraFOVDefault);
+}
+
 void ASTURifleWeapon::DealDamage(const FHitResult& HitResult)
 {
     AActor* DamagedActor = HitResult.GetActor();
